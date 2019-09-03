@@ -1,0 +1,267 @@
+.486
+.model flat, stdcall
+option casemap :none 
+include windows.inc
+include kernel32.inc
+include masm32.inc
+includelib kernel32.lib
+includelib masm32.lib
+.data
+	inputBuffer db 0
+	perexodnanowyustroky db 0DH,0AH
+        buffer db 1000 dup (" ") ;????? 1
+        buffer1 db 1000 dup (" ") ;????? 2 
+.data?
+	inputHandle dd ?
+	outputHandle dd ?
+	numberOfChars dd ?
+	chislo1 dd ?
+	chislo2 dd ?
+.code
+entryPoint:
+	
+	push STD_INPUT_HANDLE    
+	call GetStdHandle         
+	mov inputHandle, EAX     
+	
+	push STD_OUTPUT_HANDLE
+	call GetStdHandle
+	mov outputHandle, EAX
+	
+	;///////////1 ?????////////////////////////////////////
+	
+	push NULL
+        push offset numberOfChars
+        push 1000
+        push offset buffer
+        push inputHandle
+        call ReadConsole                 
+                                          
+        mov EDX, offset buffer           
+        mov EAX, numberOfChars            
+        mov byte ptr [ EDX + EAX - 2 ], 0
+        
+        CMP byte ptr buffer , '-'
+        JE Metka1
+        JMP Metka2
+        Metka1:
+        push offset buffer+1
+        call atodw       
+        NEG EAX           
+        JMP Metka3
+        Metka2:
+        push offset buffer
+        call atodw  
+        Metka3:
+        mov chislo1,EAX
+        ;;mov EBX,EAX   
+        ;push offset buffer 
+        ;push EAX            
+        ;call dwtoa
+        ;push offset buffer
+        ;call lstrlen
+        ;push NULL
+        ;push offset numberOfChars
+        ;push EAX                           
+        ;push offset buffer
+        ;push outputHandle
+        ;call WriteConsole
+        ;//////////////2 ?????///////////////////////////////////////////////////////////////////////////////////////////
+        
+        push NULL
+        push offset numberOfChars
+        push 1000
+        push offset buffer1
+        push inputHandle
+        call ReadConsole                 
+                                          
+        mov EDX, offset buffer1           
+        mov EAX, numberOfChars            
+        mov byte ptr [ EDX + EAX - 2 ], 0
+        
+        CMP byte ptr buffer1 , '-'
+        JE MetkaA
+        JMP MetkaB
+        MetkaA:
+        push offset buffer1+1
+        call atodw       
+        NEG EAX           
+        JMP MetkaC
+        MetkaB:
+        push offset buffer1
+        call atodw  
+        MetkaC:
+        mov chislo2,EAX
+        ;;mov EDX,EAX 
+        ;/////////////????????//////////////////////////////
+        mov EAX, chislo1
+	add EAX, chislo2
+	mov ECX, EAX
+
+        ;;mov ECX, EDX
+       	;;add ECX, EBX  
+
+        push offset buffer 
+        push ECX            
+        call dwtoa
+        push offset buffer
+        call lstrlen
+        push NULL
+        push offset numberOfChars
+        push EAX                           
+        push offset buffer
+        push outputHandle
+        call WriteConsole
+        
+        push NULL                 
+	push offset numberOfChars 
+	push 2                   
+	push offset perexodnanowyustroky 
+	push outputHandle         
+	call WriteConsole
+        
+        ;/////////???????? 1?????-2?????//////////////////////
+        mov EAX, chislo1
+        sub EAX, chislo2
+        mov ECX, EAX
+
+        push offset buffer 
+        push ECX            
+        call dwtoa
+        push offset buffer
+        call lstrlen
+        push NULL
+        push offset numberOfChars
+        push EAX                           
+        push offset buffer
+        push outputHandle
+        call WriteConsole
+        
+        push NULL                 
+	push offset numberOfChars 
+	push 2                   
+	push offset perexodnanowyustroky 
+	push outputHandle         
+	call WriteConsole
+	
+	;////////?????????////////////
+	mov EAX, chislo1
+        imul EAX, chislo2  
+	mov ECX, EAX
+	
+	push offset buffer 
+        push ECX            
+        call dwtoa
+        push offset buffer
+        call lstrlen
+        push NULL
+        push offset numberOfChars
+        push EAX                           
+        push offset buffer
+        push outputHandle
+        call WriteConsole
+        
+        push NULL                 
+	push offset numberOfChars 
+	push 2                   
+	push offset perexodnanowyustroky 
+	push outputHandle         
+	call WriteConsole
+
+        ;////???????////////////
+        MOV EAX,0
+        CMP EAX,chislo1
+        JG Metka15
+        JMP Metka16
+        Metka15:
+        MOV EAX,0
+        CMP EAX,chislo2
+        JG Metka18
+        JMP Metka19
+        Metka18:
+        MOV EAX,chislo1
+        NEG EAX
+        MOV chislo1,EAX
+        MOV EAX,chislo2
+        NEG EAX
+        MOV chislo2,EAX
+        mov EAX, chislo1
+        mov EDX, 0
+        idiv chislo2
+        mov ECX, EAX
+        JMP Metka20
+        Metka19:
+        MOV EAX,chislo1
+        NEG EAX
+        MOV chislo1,EAX
+        MOV EAX,chislo2
+        NEG EAX
+        MOV chislo2,EAX
+        mov EAX, chislo1
+        mov EDX, 0
+        idiv chislo2
+        mov ECX, EAX
+        Metka20:
+        push offset buffer 
+        push ECX            
+        call dwtoa
+        push offset buffer
+        call lstrlen
+        push NULL
+        push offset numberOfChars
+        push EAX                           
+        push offset buffer
+        push outputHandle
+        call WriteConsole
+        
+        push NULL                 
+	push offset numberOfChars 
+	push 2                   
+	push offset perexodnanowyustroky 
+	push outputHandle         
+	call WriteConsole
+        
+	push offset numberOfChars
+	push 1
+	push offset inputBuffer
+	push inputHandle
+	call ReadConsole
+
+	push 0
+	call ExitProcess
+        JMP Metka17
+        Metka16:
+        mov EAX, chislo1
+        mov EDX, 0
+        idiv chislo2
+        mov ECX, EAX
+        Metka17:
+        push offset buffer 
+        push ECX            
+        call dwtoa
+        push offset buffer
+        call lstrlen
+        push NULL
+        push offset numberOfChars
+        push EAX                           
+        push offset buffer
+        push outputHandle
+        call WriteConsole
+        
+        push NULL                 
+	push offset numberOfChars 
+	push 2                   
+	push offset perexodnanowyustroky 
+	push outputHandle         
+	call WriteConsole
+        
+	push offset numberOfChars
+	push 1
+	push offset inputBuffer
+	push inputHandle
+	call ReadConsole
+
+	push 0
+	call ExitProcess
+
+end entryPoint

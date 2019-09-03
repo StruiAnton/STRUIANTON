@@ -1,0 +1,339 @@
+h..//////////////////////////////////////////////////////////
+class karta {
+protected:
+	char mas[10][10];
+	char mas1[10][10];
+	char m[10];
+public:
+	karta();
+	void print();
+};
+
+
+class robot:public karta {
+public:
+	void fl();
+	void fr();
+	void fv();
+	void fn();
+	void proverka();
+	void proverkahran();
+	void ustanovka();
+	void zabiranie();
+};
+CPP..////////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+
+using namespace std;
+
+karta::karta() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			mas[i][j] = '.';
+		}
+	}
+	mas[1][1] = '#';//препятствие
+	mas[9][2] = '#';
+	mas[8][5] = '#';
+	mas[2][5] = '#';
+	mas[6][8] = '#';
+	mas[5][4] = '+';//робот
+	mas[6][1] = '*';//с меткой
+	mas[1][3] = '*';
+	mas[5][3] = '*';
+	mas[4][6] = '*';
+	mas[3][8] = '*';
+	mas1[6][1] = '*';//с меткой
+	mas1[1][3] = '*';
+	mas1[5][3] = '*';
+	mas1[4][6] = '*';
+	mas1[3][8] = '*';
+	for (int i = 0; i < 10; i++) {
+		m[i] = '0';
+	}
+}
+
+void karta::print() {
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			cout << mas[i][j] << "\t";
+		}
+		cout << endl;
+	}
+}
+
+
+
+void robot::fl() {
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (f > 0) {
+		if (mas[k][f - 1] == '#') {
+			cout << "Нельзя" << endl;
+		}
+		else {
+			if (mas1[k][f] == '*') {
+				mas[k][f] = '*';
+				mas[k][f - 1] = '+';
+			}
+			else {
+				mas[k][f] = '.';
+				mas[k][f - 1] = '+';
+			}
+		}
+	}
+	if (f == 0) {
+		cout << "Нельзя" << endl;
+	}
+}
+
+void robot::fr() {
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (f < 9) {
+		if (mas[k][f + 1] == '#') {
+			cout << "Нельзя" << endl;
+		}
+		else {
+			if (mas1[k][f] == '*') {
+				mas[k][f] = '*';
+				mas[k][f + 1] = '+';
+			}
+			else {
+				mas[k][f] = '.';
+				mas[k][f + 1] = '+';
+			}
+		}
+	}
+	if (f == 9) {
+		cout << "Нельзя" << endl;
+	}
+}
+
+void robot::fv() {
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (k > 0) {
+		if (mas[k - 1][f] == '#') {
+			cout << "Нельзя" << endl;
+		}
+		else {
+			if (mas1[k][f] == '*') {
+				mas[k][f] = '*';
+				mas[k - 1][f] = '+';
+			}
+			else {
+				mas[k][f] = '.';
+				mas[k - 1][f] = '+';
+			}
+		}
+	}
+	if (k == 0) {
+		cout << "Нельзя" << endl;
+	}
+}
+
+void robot::fn() {
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (k < 9) {
+		if (mas[k + 1][f] == '#') {
+			cout << "Нельзя" << endl;
+		}
+		else {
+			if (mas1[k][f] == '*') {
+				mas[k][f] = '*';
+				mas[k + 1][f] = '+';
+			}
+			else {
+				mas[k][f] = '.';
+				mas[k + 1][f] = '+';
+			}
+		}
+	}
+	if (k == 9) {
+		cout << "Нельзя" << endl;
+	}
+}
+
+void robot::proverka(){
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (mas1[k][f] == '*') {
+		cout << "Есть метка" << endl;
+	}
+	else {
+		cout << "Нет метки" << endl;
+	}
+}
+void robot::proverkahran() {
+	int u = 0;
+	for (int i = 0; i < 10; i++) {
+		if (m[i] == '*') {
+			u += 1;
+		}
+	}
+	cout << u << endl;
+ }
+
+void robot::ustanovka() {
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+
+	if (mas1[k][f] == '*') {
+		cout << "Нельзя установить так как в клеточке есть метка" << endl;
+	}
+	int o=0;
+	for (int i = 0; i < 10; i++) {
+		if (m[i] == '*') {
+			o = i;
+		}
+	}
+	int u = 0;
+	for (int i = 0; i < 10; i++) {
+		if (m[i] == '*') {
+			u += 1;
+		}
+	}
+	if (u==0) {
+		cout << "хранилище пустое" << endl;
+	}
+	else {
+		m[o] = '0';
+		mas1[k][f] = '*';
+	}
+}
+
+void robot::zabiranie() {
+	int f, k;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (mas[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	int u = 0;
+	for (int i = 0; i < 10; i++) {
+		if (m[i] == '*') {
+			u += 1;
+		}
+	}
+	if (u== 10) {
+		cout << "Хранилище полное" << endl;
+	}
+	if (mas1[k][f] != '*') {
+		cout << "Нет метки в клеточке" << endl;
+	}
+	else {
+		mas1[k][f] = '0';
+		for (int i = 0; i < 10; i++) {
+			if (m[i] == '0') {
+				m[i] = '*';
+				break;
+			}
+		}
+	}
+
+}
+main//////////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+
+using namespace std;
+
+int main() {
+	setlocale(0, "");
+	robot a;
+	char k;
+	a.print();
+	do{
+	cout << "Введите номер команды" << endl;
+	cin >> k;
+	switch (k)
+	{
+	case '0':
+		a.proverka();
+		break;
+	case '1':
+		a.proverkahran();
+		break;
+	case '2':
+		a.ustanovka();
+		break;
+	case '3':
+		a.zabiranie();
+		break;
+	case 'w':
+           system("cls");
+		a.fv();
+		a.print();
+		break;
+	case 'd':
+           system("cls");
+		a.fr();
+		a.print();
+		break;
+	case 's':
+           system("cls");
+		a.fn();
+		a.print();
+		break;
+	case 'a':
+           system("cls");
+		a.fl();
+		a.print();
+		break;
+	case '255':
+		break;
+	}
+	} while (k != '255');
+	system("pause");
+	return 0;
+}
