@@ -1,0 +1,610 @@
+#ifndef PCH_H
+#define PCH_H
+
+class karta {
+private:
+	char a[11][11];//peopl
+	char b[11][11];//robot
+	char s[11][11];//скрытая карта
+public:
+	void inckart();
+	void print();
+	void korabl4();  //инциализация короблей рандомно 
+	void korabl3();
+	void korabl2();
+	void korabl1();
+	void korabl4c();
+	void korabl3c();
+	void korabl2c();
+	void korabl1c();
+	void pri();
+	void upravprileft();
+	void upravpriright();
+	void upravpriunder();
+	void upravpritop();
+	int shot();
+	int shotcomp();
+	void printprivate();
+	int endgame();
+};
+
+//*-попадание
+//#-кораблик
+//+-прицел
+//О-место пустое куда уже был сделан выстрел
+//стрелять в О * нельзя
+
+#endif //PCH_H
+////////////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+
+using namespace std;
+
+void karta::inckart() {
+
+	for (int j = 0; j < 11; j++) {
+		for (int i = 0; i < 11; i++) {
+			a[j][i] = ' ';
+			b[j][i] = ' ';
+			s[j][i] = ' ';
+		}
+	}
+	a[0][0] = b[0][0] = s[0][0] = ' ';
+	a[0][1] = b[0][1] = s[0][1] = 'a';
+	a[0][2] = b[0][2] = s[0][2] = 'b';
+	a[0][3] = b[0][3] = s[0][3] = 'c';
+	a[0][4] = b[0][4] = s[0][4] = 'd';
+	a[0][5] = b[0][5] = s[0][5] = 'e';
+	a[0][6] = b[0][6] = s[0][6] = 'f';
+	a[0][7] = b[0][7] = s[0][7] = 'g';
+	a[0][8] = b[0][8] = s[0][8] = 'h';
+	a[0][9] = b[0][9] = s[0][9] = 'i';
+	a[0][10] = b[0][10] = s[0][10] = 'j';
+	a[1][0] = b[1][0] = s[1][0] = '0';
+	a[2][0] = b[2][0] = s[2][0] = '1';
+	a[3][0] = b[3][0] = s[3][0] = '2';
+	a[4][0] = b[4][0] = s[4][0] = '3';
+	a[5][0] = b[5][0] = s[5][0] = '4';
+	a[6][0] = b[6][0] = s[6][0] = '5';
+	a[7][0] = b[7][0] = s[7][0] = '6';
+	a[8][0] = b[8][0] = s[8][0] = '7';
+	a[9][0] = b[9][0] = s[9][0] = '8';
+	a[10][0] = b[10][0] = s[10][0] = '9';
+}
+
+void karta::print() {
+	for (int i = 0; i < 11; i++)
+	{
+		for (int j = 0; j < 11; j++)
+		{
+			cout << a[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+	for (int i = 0; i < 11; i++)
+	{
+		for (int j = 0; j < 11; j++)
+		{
+			cout << b[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void karta::korabl4() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (a[i][j] != '#' && a[i + 1][j] == ' ' && a[i + 2][j] == ' ' && a[i + 3][j] == ' ') {
+		a[i][j] = '#';
+		a[i + 1][j] = '#';
+		a[i + 2][j] = '#';
+		a[i + 3][j] = '#';
+	}
+	else {
+		if (a[i][j] != '#' && a[i - 1][j] == ' ' && a[i - 2][j] == ' ' && a[i - 3][j] == ' ') {
+			a[i][j] = '#';
+			a[i - 1][j] = '#';
+			a[i - 2][j] = '#';
+			a[i - 3][j] = '#';
+		}
+		else {
+			return korabl4();
+		}
+	}
+}
+
+void karta::korabl3() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (a[i][j] != '#' && a[i + 1][j] == ' ' && a[i + 2][j] == ' ' && a[i + 3][j] == ' ' && a[i - 1][j] == ' ' && a[i][j-1]==' ' && a[i][j+1]==' ' && a[i+1][j-1]==' ' && a[i+1][j+1]==' ' && a[i+2][j-1]==' ' && a[i+2][j+1]==' ' && a[i-1][j-1]==' ' && a[i-1][j+1]==' ' && a[i+3][j-1]==' ' && a[i+3][j+1]==' ') {
+		a[i][j] = '#';
+		a[i + 1][j] = '#';
+		a[i + 2][j] = '#';
+	}
+	else {
+		if (a[i][j] != '#' && a[i - 1][j] == ' ' && a[i - 2][j] == ' ' && a[i - 3][j] == ' ' && a[i + 1][j] == ' ' && a[i][j - 1] == ' ' && a[i][j + 1] == ' ' && a[i - 1][j - 1] == ' ' && a[i - 1][j + 1] == ' ' && a[i - 2][j - 1] == ' ' && a[i - 2][j + 1] == ' ' && a[i + 1][j - 1] == ' ' && a[i + 1][j + 1] == ' ' && a[i - 3][j - 1] == ' ' && a[i - 3][j + 1]==' ') {
+			a[i][j] = '#';
+			a[i - 1][j] = '#';
+			a[i - 2][j] = '#';
+		}
+		else {
+			return korabl3();
+		}
+	}
+}
+
+void karta::korabl2() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (a[i][j] != '#' && a[i + 1][j] == ' '&& a[i + 2][j] == ' ' && a[i - 1][j] == ' ' && a[i][j - 1] == ' ' && a[i][j + 1] == ' ' && a[i + 1][j - 1] == ' ' && a[i + 1][j + 1] == ' ' && a[i-1][j-1]==' ' && a[i-1][j+1]==' ' && a[i+2][j-1]==' ' && a[i+2][j+1]==' ' ) {
+		a[i][j] = '#';
+		a[i + 1][j] = '#';
+	}
+	else {
+		if (a[i][j] != '#' && a[i - 1][j] == ' '&& a[i - 2][j] == ' ' && a[i + 1][j] == ' ' && a[i][j - 1] == ' ' && a[i][j + 1] == ' ' && a[i - 1][j - 1] == ' ' && a[i - 1][j + 1] == ' ' && a[i + 1][j - 1] == ' ' && a[i + 1][j + 1] == ' ' && a[i - 2][j - 1] == ' ' && a[i - 2][j + 1] == ' ') {
+			a[i][j] = '#';
+			a[i - 1][j] = '#';
+		}
+		else {
+			return korabl2();
+		}
+	}
+}
+
+void karta::korabl1() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (a[i][j] != '#'&& a[i - 1][j] == ' ' && a[i + 1][j] == ' ' && a[i][j - 1] == ' ' && a[i][j + 1] == ' ' && a[i+1][j-1]==' ' && a[i+1][j+1]==' ' && a[i-1][j-1]==' ' && a[i-1][j+1]==' ') {
+		a[i][j] = '#';
+	}
+	else {
+		return korabl1();
+	}
+}
+
+void karta::korabl1c() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (s[i][j] != '#'&& s[i - 1][j] == ' ' && s[i + 1][j] == ' ' && s[i][j - 1] == ' ' && s[i][j + 1] == ' ' && s[i + 1][j - 1] == ' ' && s[i + 1][j + 1] == ' ' && s[i - 1][j - 1] == ' ' && s[i - 1][j + 1] == ' ') {
+		s[i][j] = '#';
+	}
+	else {
+		return korabl1c();
+	}
+}
+
+void karta::korabl2c() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (s[i][j] != '#' && s[i + 1][j] == ' '&& s[i + 2][j] == ' ' && s[i - 1][j] == ' ' && s[i][j - 1] == ' ' && s[i][j + 1] == ' ' && s[i + 1][j - 1] == ' ' && s[i + 1][j + 1] == ' ' && s[i - 1][j - 1] == ' ' && s[i - 1][j + 1] == ' ' && s[i + 2][j - 1] == ' ' && s[i + 2][j + 1] == ' ') {
+		s[i][j] = '#';
+		s[i + 1][j] = '#';
+	}
+	else {
+		if (s[i][j] != '#' && s[i - 1][j] == ' '&& s[i - 2][j] == ' ' && s[i + 1][j] == ' '  && s[i][j - 1] == ' ' && s[i][j + 1] == ' ' && s[i - 1][j - 1] == ' ' && s[i - 1][j + 1] == ' ' && s[i + 1][j - 1] == ' ' && s[i + 1][j + 1] == ' ' && s[i - 2][j - 1] == ' ' && s[i - 2][j + 1] == ' ') {
+			s[i][j] = '#';
+			s[i - 1][j] = '#';
+		}
+		else {
+			return korabl2c();
+		}
+	}
+}
+
+void karta::korabl3c() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (s[i][j] != '#' && s[i + 1][j] == ' ' && s[i + 2][j] == ' ' && s[i + 3][j] == ' ' && s[i - 1][j] == ' '  && s[i][j - 1] == ' ' && s[i][j + 1] == ' ' && s[i + 1][j - 1] == ' ' && s[i + 1][j + 1] == ' ' && s[i + 2][j - 1] == ' ' && s[i + 2][j + 1] == ' ' && s[i - 1][j - 1] == ' ' && s[i - 1][j + 1] == ' ' && s[i + 3][j - 1] == ' ' && s[i + 3][j + 1] == ' ') {
+		s[i][j] = '#';
+		s[i + 1][j] = '#';
+		s[i + 2][j] = '#';
+	}
+	else {
+		if (s[i][j] != '#' && s[i - 1][j] == ' ' && s[i - 2][j] == ' ' && s[i - 3][j] == ' ' && s[i + 1][j] == ' '  && s[i][j - 1] == ' ' && s[i][j + 1] == ' ' && s[i - 1][j - 1] == ' ' && s[i - 1][j + 1] == ' ' && s[i - 2][j - 1] == ' ' && s[i - 2][j + 1] == ' ' && s[i + 1][j - 1] == ' ' && s[i + 1][j + 1] == ' ' && s[i - 3][j - 1] == ' ' && s[i - 3][j + 1] == ' ') {
+			s[i][j] = '#';
+			s[i - 1][j] = '#';
+			s[i - 2][j] = '#';
+		}
+		else {
+			return korabl3c();
+		}
+	}
+}
+
+void karta::korabl4c() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (s[i][j] != '#' && s[i + 1][j] == ' ' && s[i + 2][j] == ' ' && s[i + 3][j] == ' ') {
+		s[i][j] = '#';
+		s[i + 1][j] = '#';
+		s[i + 2][j] = '#';
+		s[i + 3][j] = '#';
+	}
+	else {
+		if (s[i][j] != '#' && s[i - 1][j] == ' ' && s[i - 2][j] == ' ' && s[i - 3][j] == ' ') {
+			s[i][j] = '#';
+			s[i - 1][j] = '#';
+			s[i - 2][j] = '#';
+			s[i - 3][j] = '#';
+		}
+		else {
+			return korabl4c();
+		}
+	}
+}
+
+void karta::pri() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	b[i][j] = '+';
+}
+
+void karta::upravprileft() {
+	int f, k;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++) {
+			if (b[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (f > 1) {
+		if (s[k][f] == '*') {
+			b[k][f - 1] = '+';
+			b[k][f] = '*';
+		}
+		else {
+			if (s[k][f] == 'O') {
+				b[k][f - 1] = '+';
+				b[k][f] = 'O';
+			}
+			else {
+				b[k][f - 1] = '+';
+				b[k][f] = ' ';
+			}
+		}
+	}
+	if (f == 1) {
+		cout << "Нельзя" << endl;
+	}
+
+}
+
+void karta::upravpriright() {
+	int f, k;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++) {
+			if (b[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (f < 10) {
+		if (s[k][f] == '*') {
+			b[k][f + 1] = '+';
+			b[k][f] = '*';
+		}
+		else {
+			if (s[k][f] == 'O') {
+				b[k][f + 1] = '+';
+				b[k][f] = 'O';
+			}
+			else {
+				b[k][f + 1] = '+';
+				b[k][f] = ' ';
+			}
+		}
+	}
+	if (f == 10) {
+		cout << "Нельзя" << endl;
+	}
+
+}
+
+void karta::upravpriunder() {
+	int f, k;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++) {
+			if (b[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (k < 10) {
+		if (s[k][f] == '*') {
+			b[k + 1][f] = '+';
+			b[k][f] = '*';
+		}
+		else {
+			if (s[k][f] == 'O') {
+				b[k + 1][f] = '+';
+				b[k][f] = 'O';
+			}
+			else {
+				b[k + 1][f] = '+';
+				b[k][f] = ' ';
+			}
+		}
+	}
+	if (k == 10) {
+		cout << "Нельзя" << endl;
+	}
+}
+
+void karta::upravpritop() {
+	int f, k;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++) {
+			if (b[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+	if (k > 1) {
+		if (s[k][f] == '*') {
+			b[k - 1][f] = '+';
+			b[k][f] = '*';
+		}
+		else {
+			if (s[k][f] == 'O') {
+				b[k - 1][f] = '+';
+				b[k][f] = 'O';
+			}
+			else {
+				b[k - 1][f] = '+';
+				b[k][f] = ' ';
+			}
+		}
+	}
+	if (k == 1) {
+		cout << "Нельзя" << endl;
+	}
+}
+
+int karta::shot() {
+	int f, k;
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++) {
+			if (b[i][j] == '+') {
+				k = i;
+				f = j;
+			}
+		}
+	}
+
+	if (s[k][f] == '#') {
+		b[k][f] = '*';
+		s[k][f] = '*';
+		return 1;
+	}
+	else {
+		b[k][f] = 'O';
+		s[k][f] = 'O';
+		return 2;
+	}
+}
+
+int karta::shotcomp() {
+	int i;
+	int j;
+	j = rand() % 10 + 1;// от 1 до 10
+	i = rand() % 10 + 1;
+	if (a[i][j] == '*' || a[i][j] == 'O') {
+		return shotcomp();
+	}
+	else {
+		if (a[i][j] == ' ') {
+			a[i][j] = 'O';
+			return 2;
+		}
+		else {
+			a[i][j] = '*';
+			return 1;
+		}
+	}
+}
+
+void karta::printprivate() {
+	cout << endl;
+	for (int i = 0; i < 11; i++)
+	{
+		for (int j = 0; j < 11; j++)
+		{
+			cout << s[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+int karta::endgame() {
+	int s1 = 0;
+	int y = 0;
+	for (int i = 0; i < 11; i++) {
+		for (int j = 0; j < 11; j++) {
+			if (a[i][j] == '#') {
+				s1 = +1;
+			}
+		}
+	}
+	for (int i = 0; i < 11; i++) {
+		for (int j = 0; j < 11; j++) {
+			if (s[i][j] == '#') {
+				y = +1;
+			}
+		}
+	}
+	if (s1 == 0 || y == 0) {
+		return 2;
+	}
+	else {
+		return 1;
+	}
+}
+/////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+
+int main()
+{
+	setlocale(0, "");
+	karta a;
+	a.inckart();
+	a.korabl4();
+	a.korabl3();
+	a.korabl3();
+	a.korabl2();
+	a.korabl2();
+	a.korabl2();
+	a.korabl1();
+	a.korabl1();
+	a.korabl1();
+	a.korabl1();
+	a.korabl4c();
+	a.korabl3c();
+	a.korabl3c();
+	a.korabl2c();
+	a.korabl2c();
+	a.korabl2c();
+	a.korabl1c();
+	a.korabl1c();
+	a.korabl1c();
+	a.korabl1c();
+	char k;
+	int e1;
+	a.print();
+	do {
+		cin >> k;
+		switch (k)
+		{
+		case 'r'://функция прицеливания
+			e1 = a.endgame();
+			if (e1 == 2) {
+				k = '2';
+			}
+			else {
+				a.pri();
+				system("cls");
+				a.print();
+				break;
+			}
+		case 'a':
+			e1 = a.endgame();
+			if (e1 == 2) {
+				k = '2';
+			}
+			else {
+				system("cls");
+				a.upravprileft();
+				a.print();
+				break;
+			}
+		case 'd':
+			e1 = a.endgame();
+			if (e1 == 2) {
+				k = '2';
+			}
+			else {
+				system("cls");
+				a.upravpriright();
+				a.print();
+				break;
+			}
+		case 's':
+			e1 = a.endgame();
+			if (e1 == 2) {
+				k = '2';
+			}
+			else {
+				system("cls");
+				a.upravpriunder();
+				a.print();
+				break;
+			}
+		case 'w':
+			e1 = a.endgame();
+			if (e1 == 2) {
+				k = '2';
+			}
+			else {
+				system("cls");
+				a.upravpritop();
+				a.print();
+				break;
+			}
+		case 'e':
+			system("cls");
+			int d;
+			d = a.shot();
+			if (d == 1) {
+				a.print();
+				break;
+			}
+			else {
+				int y;
+				y = a.shotcomp();
+				if (y == 1) {
+					int c;
+					c = a.shotcomp();
+					if (c == 1) {
+						a.shotcomp();
+						a.print();
+						break;
+					}
+					else {
+						a.print();
+						break;
+					}
+				}
+				else {
+					a.print();
+					break;
+				}
+			}
+		case'$':
+			e1 = a.endgame();
+			if (e1 == 2) {
+				k = '2';
+			}
+			else {
+				system("cls");
+				a.print();
+				a.printprivate();
+				break;
+			}
+		case '2':
+			cout << "endgame" << endl;
+			break;
+		}
+	} while (k != '2');
+	cout << "endgame" << endl;
+	system("pause");
+	return 0;
+}
