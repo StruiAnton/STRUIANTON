@@ -1,0 +1,343 @@
+#include "pch.h"
+#include <iostream>
+#include <ctime>
+#include <windows.h>
+
+using namespace std;
+
+void vodrandom(int *a, int N) {
+	for (int i = 0; i < N; i++) {
+		a[i] = rand() % N + 1;
+	}
+}
+
+void vodpoybB(int *a,int N) {
+	for (int i = 0; i < N; i++) {
+		a[i] = N - i;
+	}
+}
+
+void vodpovozr(int *a,int N) {
+	for (int i = 0; i < N; i++) {
+		a[i] = i + 1;
+	}
+}
+
+void print(int *a, int N) {
+	for (int i = 0; i < N; i++) {
+		cout << a[i] << " ";
+	}
+	cout << endl;
+}
+
+
+double sortirovkavbr(int *a, int N) {
+	double start_time = clock();
+	int min;
+	for (int i = 0; i < N; ++i) {
+		int pos = i;
+		min = a[i];
+		for (int j = i + 1; j < N; ++j) {
+			if (a[j] < min) {
+				pos = j;
+				min = a[j];
+			}
+		}
+		a[pos] = a[i];
+		a[i] = min;
+	}
+	double end_time = clock();
+	double search_time = end_time - start_time;
+	double time = search_time / 1000.0;
+	return time;
+}
+
+double sortirovkavstavk(int *a, int N) {
+	double start_time = clock();
+	for (int i = 1; i < N; i++) {
+		int key = a[i];
+		int j = i - 1;
+		while (j >= 0 && a[j] > key) {
+			a[j + 1] = a[j];
+			j--;
+		}
+		a[j + 1] = key;
+	}
+	double end_time = clock();
+	double search_time = end_time - start_time;
+	double time = search_time / 1000.0;
+	return time;
+}
+
+double sortirovkaobmen(int *a, int N) {
+	double start_time = clock();
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N-1 ; j++) {
+			if (a[j] > a[j+1]) {
+				swap(a[j], a[j + 1]);
+			}
+		}
+	}
+	double end_time = clock();
+	double search_time = end_time - start_time;
+	double time = search_time / 1000.0;
+	return time;
+}
+
+void sortirovkaquik1(int *a, int l, int r) {
+	int left = l, right = r;
+	int piv = a[(left + right) / 2];
+	while (left <= right)
+	{
+		while (a[left] < piv)
+			left++;
+		while (a[right] > piv)
+			right--;
+		if (left <= right)
+			swap(a[left++], a[right--]);
+	}
+	if (l < right)
+		sortirovkaquik1(a, l, right);
+	if (r > left)
+		sortirovkaquik1(a, left, r);
+}
+
+double sortirovkaquik(int *a,int l,int r) {
+	    double start_time = clock();
+		int left = l, right = r;
+		int piv = a[(left + right) / 2]; 
+		while (left <= right)
+		{
+			while (a[left] < piv)
+				left++;
+			while (a[right] > piv)  
+				right--;
+			if (left <= right)
+				swap(a[left++], a[right--]);
+		}
+		if (l < right)
+			sortirovkaquik1(a,l, right);
+		if (r > left)
+		    sortirovkaquik1(a,left, r);
+		double end_time = clock();
+		double search_time = end_time - start_time;
+		double time = search_time / 1000.0;
+		return time;
+}
+
+
+	void fixHeap(int * heap, int i, const int size)
+
+	{
+
+		// Индекс максимального элемента в текущей тройке элементов:
+
+		int maxIdx = i;
+
+		// Значение текущего элемента:
+
+		int value = heap[i];
+
+		while (true)
+
+		{
+
+			int childIdx = i * 2 + 1; //Индекс левого потомка
+
+			// Если есть левый потомок и он больше текущего элемента,
+
+			if ((childIdx < size) && (heap[childIdx] > value))
+
+				maxIdx = childIdx; // то он считается максимальным
+
+			childIdx = i * 2 + 2; //Индекс правого потомка
+
+			// Если есть правый потомок и он больше максимального,
+
+			if ((childIdx < size) && (heap[childIdx] > heap[maxIdx]))
+
+				maxIdx = childIdx; // то он считается максимальным
+
+				// Если текущий элемент является максимальным из трёх
+
+				// (т.е. если он больше своих детей), то конец:
+
+			if (maxIdx == i)
+
+				break;
+
+			// Меняем местами текущий элемент с максимальным:
+
+			heap[i] = heap[maxIdx];
+
+			heap[maxIdx] = value;
+
+			// Переходим к изменившемуся потомку
+
+			i = maxIdx;
+
+		}
+
+
+	}
+
+	// Пирамидальная сортировка массива heap размера size
+
+double heapSort(int * heap, int size)
+
+	{
+	    double start_time = clock();
+		// Построение пирамиды из массива:
+
+		for (int i = size / 2 - 1; i >= 0; --i)
+
+			fixHeap(heap, i, size);
+
+		// Сортировка с помощью пирамиды
+
+		while (size > 1) // пока в пирамиде больше одного элемента
+
+		{
+
+			--size; // Отделяем последний элемент
+
+			// Обмениваем местами корневой элемент и отделённый:
+
+			int firstElem = heap[0];
+
+			heap[0] = heap[size];
+
+			heap[size] = firstElem;
+
+			// "Просеиваем" новый корневой элемент вниз:
+
+			fixHeap(heap, 0, size);
+
+		}
+		double end_time = clock();
+		double search_time = end_time - start_time;
+		double time = search_time / 1000.0;
+		return time;
+	}
+
+
+
+
+int main() {
+	setlocale(0, "");
+	int k;
+	double time;
+	int N;
+	cout << "Введите размер массива" << endl;
+	cin >> N;
+	int *a = new int[N];
+	cout << "Введите номер сортировки" << endl;
+	cin >> k;
+	if (k == 1) {
+		int u;
+		cout << "Введите номер заполнения" << endl;
+		cin >> u;
+		if (u == 1) {
+			vodpovozr(a, N);
+		}
+		if (u == 2) {
+			vodpoybB(a, N);
+		}
+		if (u == 3) {
+			vodrandom(a, N);
+		}
+		time = sortirovkavbr(a, N);
+		print(a, N);
+		cout << "Время в секундах " << time << endl;
+		delete[]a;
+		Sleep(20000);
+		system("cls");
+		return main();
+	}
+	if (k == 2) {
+		int u1;
+		cout << "Введите номер заполнения" << endl;
+		cin >> u1;
+		if (u1 == 1) {
+			vodpovozr(a, N);
+		}
+		if (u1 == 2) {
+			vodpoybB(a, N);
+		}
+		if (u1 == 3) {
+			vodrandom(a, N);
+		}
+		time = sortirovkavstavk(a, N);
+		print(a, N);
+		cout << "Время в секундах " << time << endl;
+		delete[]a;
+		Sleep(20000);
+		system("cls");
+		return main();
+	}
+	if (k == 3) {
+		int u2;
+		cout << "Введите номер заполнения" << endl;
+		cin >> u2;
+		if (u2 == 1) {
+			vodpovozr(a, N);
+		}
+		if (u2 == 2) {
+			vodpoybB(a, N);
+		}
+		if (u2 == 3) {
+			vodrandom(a, N);
+		}
+		time = sortirovkaobmen(a,N);
+		print(a, N);
+		cout <<"Время в секундах " <<time << endl;
+		delete[]a;
+		Sleep(20000);
+		system("cls");
+		return main();
+	}
+	if (k == 4) {
+		int u3;
+		cout << "Введите номер заполнения" << endl;
+		cin >> u3;
+		if (u3 == 1) {
+			vodpovozr(a, N);
+		}
+		if (u3 == 2) {
+			vodpoybB(a, N);
+		}
+		if (u3 == 3) {
+			vodrandom(a, N);
+		}
+		time = sortirovkaquik(a, 0, N - 1);
+		print(a, N);
+		cout << "Время в секундах " << time << endl;
+		delete[]a;
+		Sleep(20000);
+		system("cls");
+		return main();
+	}
+	if (k == 5) {
+		int u4;
+		cout << "Введите номер заполнения" << endl;
+		cin >> u4;
+		if (u4 == 1) {
+			vodpovozr(a, N);
+		}
+		if (u4 == 2) {
+			vodpoybB(a, N);
+		}
+		if (u4 == 3) {
+			vodrandom(a, N);
+		}
+		time = heapSort(a,N);
+		print(a, N);
+		cout << "Время в секундах " << time << endl;
+		delete[]a;
+		Sleep(20000);
+		system("cls");
+		return main();
+	}
+	delete[]a;
+	return 0;
+}
