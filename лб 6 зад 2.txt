@@ -1,0 +1,36 @@
+#include "pch.h"
+#include <iostream>
+#include <windows.h>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	setlocale(0, "");
+	int N;
+	cout << "¬ведите размер вектора" << endl;
+	cin >> N;
+	vector <int> a(N);
+	for (int i = 0; i < N; i++) {
+		cin >> a[i];
+	}
+	vector <int> b(N);
+	int j = 0;
+	for (int i = 0; i < a.size(); i++) {
+		if (a[i] == 0) {
+			b[j] = 0;
+			j++;
+		}
+	}
+		for (int i = 0; i < a.size(); i++) {
+			if (a[i] != 0) {
+				b[j] = a[i];
+				j++;
+			}
+		}
+		for (int k = 0; k < b.size(); k++) {
+			cout << b[k] <<" ";
+	}
+	return 0;
+}

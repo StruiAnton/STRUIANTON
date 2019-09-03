@@ -1,0 +1,309 @@
+#pragma once
+#ifndef HEADER_H
+#define HEADER_H
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class amuni {
+protected:
+	string name;
+	int money;
+	int mas;
+public:
+	virtual void show() = 0;
+	virtual int get_money() = 0;
+	virtual int get_mas() = 0;
+	virtual void print() = 0;
+};
+
+void cinn(amuni *A[5]);
+void sum(amuni *A[5]);
+void print(amuni *A[5]);
+void poisk(amuni *A[5]);
+
+template <typename V>
+void sort(V *A[5]) {
+	for (int i = 0; i < 5; i++)
+		for (int j = 0; j < 4; j++) {
+			if (A[j]->get_mas() > A[j + 1]->get_mas()) {
+				swap(A[j], A[j + 1]);
+			}
+		}
+}
+
+#endif
+////////////////////////////////////////////////////////////
+#pragma once
+#ifndef HEADER1_H
+#define HEADER1_H
+#include "Header.h"
+
+class bots :public amuni { //ботинки
+public:
+	void show();
+	int get_money();
+	int get_mas();
+	void print();
+};
+
+#endif 
+//////////////////////////////////////////////////////////
+#pragma once
+#ifndef HEADER2_H
+#define HEADER2_H
+#include "Header.h"
+
+class cap :public amuni { //шлем
+public:
+	void show();
+	int get_money();
+	int get_mas();
+	void print();
+};
+
+
+#endif
+//////////////////////////////////////////////////////////
+#pragma once
+#ifndef HEADER3_H
+#define HEADER3_H
+#include "Header.h"
+
+class gloves :public amuni { //перчатки
+public:
+	void show();
+	int get_money();
+	int get_mas();
+	void print();
+};
+
+
+#endif 
+/////////////////////////////////////////////////////////////
+#pragma once
+#ifndef HEADER4_H
+#define HEADER4_H
+#include "Header.h"
+
+class suit :public amuni { //куртка
+public:
+	void show();
+	int get_money();
+	int get_mas();
+	void print();
+};
+
+#endif
+////////////////////////////////////////////////////////////
+#pragma once
+#ifndef HEADER5_H
+#define HEADER5_H
+#include "Header.h"
+
+class trousers :public amuni {  //штаны
+public:
+	void show();
+	int get_money();
+	int get_mas();
+	void print();
+};
+
+#endif
+//////////////////////////////////////////////////////////
+#include "pch.h"
+#include "Header.h"
+#include "Header1.h"
+#include "Header2.h"
+#include "Header3.h"
+#include "Header4.h"
+#include "Header5.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void cinn(amuni *A[5]) {
+	A[0] = new bots;
+	A[0]->show();
+	A[1] = new trousers;
+	A[1]->show();
+	A[2] = new suit;
+	A[2]->show();
+	A[3] = new gloves;
+	A[3]->show();
+	A[4] = new cap;
+	A[4]->show();
+}
+
+void sum(amuni *A[5]) {
+	int sum = 0;
+	for (int i = 0; i < 5; i++) {
+		sum += A[i]->get_money();
+	}
+	cout << "Стоимость всех вещей равна " << sum << endl;
+}
+
+void print(amuni *A[5]) {
+	for (int i = 0; i < 5; i++) {
+		A[i]->print();
+	}
+}
+
+void poisk(amuni *A[5]) {
+	cout << "Введите начальную цену диапазона" << endl;
+	int k;
+	cin >> k;
+	cout << "Введите конечную цену диапазона" << endl;
+	int l;
+	cin >> l;
+	for (int i = 0; i < 5; i++) {
+		if (A[i]->get_money() >= k && A[i]->get_money() <= l) {
+			A[i]->print();
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include "Header1.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void bots::show() {
+	cout << "Введите название ботинков" << endl;
+	cin >> name;
+	cout << "Введите цену ботинков" << endl;
+	cin >> money;
+	cout << "Введите массу ботинков" << endl;
+	cin >> mas;
+}
+
+int bots::get_mas() {
+	return mas;
+}
+
+int bots::get_money() {
+	return money;
+}
+
+void bots::print() {
+	cout << "Ботинки " << name << " Цена " << money << " Вес " << mas << endl;
+}
+//////////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include "Header2.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void cap::show() {
+	cout << "Введите название шлема" << endl;
+	cin >> name;
+	cout << "Введите цену шлема" << endl;
+	cin >> money;
+	cout << "Введите массу шлема" << endl;
+	cin >> mas;
+}
+
+int cap::get_money() { return money; }
+
+int cap::get_mas() { return mas; }
+
+void cap::print() {
+	cout << "Шлем " << name << " Цена " << money << " Вес " << mas << endl;
+}
+//////////////////////////////////////////////////////////
+#include "pch.h"
+#include "Header3.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void gloves::show() {
+	cout << "Введите название перчаток" << endl;
+	cin >> name;
+	cout << "Введите цену перчаток" << endl;
+	cin >> money;
+	cout << "Введите массу перчаток" << endl;
+	cin >> mas;
+}
+int gloves::get_money() { return money; }
+
+int gloves::get_mas() { return mas; }
+
+void gloves::print() {
+	cout << "Перчатки " << name << " Цена " << money << " Вес " << mas << endl;
+}
+/////////////////////////////////////////////////////////////
+#include "pch.h"
+#include "Header4.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void suit::show() {
+	cout << "Введите название куртки" << endl;
+	cin >> name;
+	cout << "Введите цену куртки" << endl;
+	cin >> money;
+	cout << "Введите массу куртки" << endl;
+	cin >> mas;
+}
+int suit::get_money() { return money; }
+
+int suit::get_mas() { return mas; }
+
+void suit::print() {
+	cout << "Куртка " << name << " Цена " << money << " Вес " << mas << endl;
+}
+/////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include "Header5.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void trousers::show() {
+	cout << "Введите название штанов" << endl;
+	cin >> name;
+	cout << "Введите цену штанов" << endl;
+	cin >> money;
+	cout << "Введите массу штанов" << endl;
+	cin >> mas;
+}
+int trousers::get_money() { return money; }
+
+int trousers::get_mas() { return mas; }
+
+void trousers::print() {
+	cout << "Штаны " << name << " Цена " << money << " Вес " << mas << endl;
+}
+//////////////main///////////////////////////////
+#include "pch.h"
+#include "Header.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+	setlocale(0, "");
+	amuni *A[5];
+	cinn(A);
+	sum(A);
+	sort(A);
+	print(A);
+	poisk(A);
+	delete[]A;
+	cin.get();
+	return 0;
+} 

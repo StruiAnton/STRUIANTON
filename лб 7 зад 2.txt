@@ -1,0 +1,61 @@
+#include "pch.h"
+#include <iostream>
+#include <vector>
+#include <iterator>
+
+using namespace std;
+
+void f(vector<int> & v) {
+	vector <int> ::iterator iter1 = v.begin();
+	while (iter1 != v.end()) {
+		cin >> *iter1;
+		++iter1;
+	}
+}
+
+void f1(vector<int> & v) {
+	vector <int> ::iterator iter2 = v.begin();
+	while (iter2 != v.end()) {
+		cout << *iter2 << endl;
+		++iter2;
+	}
+}
+
+template <typename iterator>
+void f2(iterator first, iterator last,int k)
+{
+	if (!(first < last))
+		return;
+	if(k==1){
+	for (iterator i = first + 1; i != last; ++i) {
+		for (iterator j = i; j != first && *j < *(j - 1); --j) {
+			iter_swap(j - 1, j);
+	}
+	}
+	}
+	if (k == 2) {
+		for (iterator i = first + 1; i != last; ++i) {
+			for (iterator j = i; j != first && *j > *(j - 1); --j) {
+				iter_swap(j - 1, j);
+			}
+		}
+	}
+}
+
+int main()
+{
+	setlocale(0, "");
+	int N;
+	cout << "Введите количество элементов" << endl;
+	cin >> N;
+	vector <int> v(N);
+	f(v);
+	cout << "1.По возрастанию 2.По убыванию" << endl;
+	int k;
+	cin >> k;
+	f2(v.begin(), v.end(),k);
+	cout << "Ввывод вектора" << endl;
+	f1(v);
+	cin.get();
+	return 0;
+}

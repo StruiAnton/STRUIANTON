@@ -1,0 +1,173 @@
+h.///////////////////////////////////////////////////////////////
+/***************************************************************
+ *                                                             *
+ * Файл     : geometry.h                                       *
+ *                                                             *
+ * Описание : заголовочный файл с описанием набора классов     *
+ *            для решения геометрических задач                 *
+ *                                                             *
+ ***************************************************************/
+
+
+ // --------- Класс "Точка" ---------------
+
+class Point {
+	double x, y; // координаты точки
+public:
+	Point(double X, double Y); // конструктор класса
+	double getX();             // чтение поля X
+	double getY();             // чтение поля Y
+	friend void f(const Point &P1, const Point &P2, const Point &P3);
+	friend void f1(const Point &P1, const Point &P2, const Point &P3);
+	friend void f2(const Point &P1, const Point &P2, const Point &P3);
+};
+
+
+class vector {
+	double x, y;
+public:
+	void vector1();
+	double operator *(const vector &M);
+	void operator +(const vector &M);
+	void operator -(const vector &M);
+	void dlina();
+};
+CPP./////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+/***************************************************************
+ *                                                             *
+ * Файл     : geometry.cpp                                     *
+ *                                                             *
+ * Описание : модуль, содержащий реализацию методов классов    *
+ *            для решения геометрических задач                 *
+ *                                                             *
+ ***************************************************************/
+#include <math.h>
+#include <iostream>
+
+using namespace std;
+// -------------------------------------------------------------
+//       Методы класса "Точка" 
+// -------------------------------------------------------------
+
+// конструктор: точка задается своими координатами
+Point::Point(double X, double Y) {
+	x = X; y = Y;
+}
+
+// прочитать координату Х
+double Point::getX() {
+	return x;
+}
+
+// прочитать координату У
+double Point::getY() {
+	return y;
+}
+
+
+void vector::vector1() {
+	cout << "Введите вектор " << endl;
+	cout << "x=" << endl;
+	cin >> x;
+	cout << "y=" << endl;
+	cin >> y;
+}
+
+void f(const Point &P1, const Point &P2, const Point &P3) {
+	cout << "(" << P2.x + P1.x - P3.x << "," << P2.y + P1.y - P3.y << ")" << endl;
+}
+
+void f1(const Point &P1, const Point &P2, const Point &P3) {
+	cout << "(" << P3.x + P1.x - P2.x << "," << P3.y + P1.y - P2.y << ")" << endl;
+}
+
+void f2(const Point &P1, const Point &P2, const Point &P3) {
+	cout << "(" << P3.x + P2.x - P1.x << "," << P3.y + P2.y - P1.y << ")" << endl;
+}
+
+double vector::operator*(const vector &M) {
+	return (M.x*x) + (y * M.y);
+}
+
+void vector::operator +(const vector &M) {
+	cout << "(" << M.x + x << "," << M.y + y << ")" << endl;
+}
+
+void vector::operator-(const vector &M) {
+	cout << "(" << M.x - x << "," << M.y - y << ")" << endl;
+}
+
+void vector::dlina() {
+	double a, b;
+	b = pow(x, 2) + pow(y, 2);
+	a = sqrt(b);
+	cout << a << endl;
+}
+main///////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+
+/***************************************************************
+ *                                                             *
+ * Файл     : triangle.cpp                                     *
+ *                                                             *
+ * Описание : главный файл проекта для демонстрации            *
+ *            использования объектов для решения               *
+ *            геометрических задач                             *
+ *                                                             *
+ ***************************************************************
+ *                                                             *
+ * Дано     : Координаты вершин треугольника.                  *
+ * Найти    : Описанную около этого треугольника окружность.   *
+ *                                                             *
+ ***************************************************************/
+
+#include <windows.h>
+
+using namespace std;
+
+
+int main(int argc, char* argv[]) {
+	setlocale(0, "");
+	vector M,N;
+	M.vector1();
+	N.vector1();
+	cout << "Скалярное произведение векторов " << M * N << endl;
+	cout << "Алгебраическая сумма векторов" << endl;
+	M + N;
+	cout << "Разность векторов (вектор 2-вектор 1)" << endl;
+	M - N;
+	cout << "Длина вектора 1" << endl;
+	M.dlina();
+	cout << "Длина вектора 2" << endl;
+	N.dlina();
+	cout << "Введите координаты 1 точки" << endl;
+	int i, i1, i2, j, j1, j2;
+	cout << "x1=" << endl;
+	cin >> i;
+	cout << "y1=" << endl;
+	cin >> j;
+	cout << "Введите координаты 2 точки" << endl;
+	cout << "x2=" << endl;
+	cin >> i1;
+	cout << "y2=" << endl;
+	cin >> j1;
+	cout << "Введите координаты 3 точки" << endl;
+	cout << "x3=" << endl;
+	cin >> i2;
+	cout << "y3=" << endl;
+	cin >> j2;
+	Point P1(i, j);
+	Point P2(i1, j1);
+	Point P3(i2, j2);
+	int k;
+	cout << "Точки 1 и 2 расположены на концах диогонали.Введите 1" << endl;
+	cout << "Точки 1 и 3 расположены на концах диогонали.Введите 2" << endl;
+	cout << "Точки 2 и 3 расположены на концах диогонали.Введите 3" << endl;
+		f(P1, P2, P3);
+		f1(P1, P2, P3);
+		f2(P1, P2, P3);
+	cin.get();
+	return 0;
+}

@@ -1,0 +1,82 @@
+#include "pch.h"
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+class mas {
+	int N;
+	T *m;
+public:
+	mas(int _N) {
+		N = _N;
+		m = new T[N];
+	}
+	mas(mas &a) {
+		N = a.N;
+		m = new T[a.N];
+		for (int i = 0; i < a.N; i++) {
+			m[i] = a.m[i];
+		}
+	}
+	void f1() { //по возрастанию
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N - 1; j++) {
+				if (m[j] > m[j + 1]) {
+					swap(m[j], m[j + 1]);
+				}
+			}
+		}
+	}
+	void f2() {  //по убыванию
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N - 1; j++) {
+				if (m[j] < m[j + 1]) {
+					swap(m[j], m[j + 1]);
+				}
+			}
+		}
+	}
+	friend istream & operator>>(istream &in, const mas &obj) {
+		for (int i = 0; i < obj.N; i++) {
+			in >> obj.m[i];
+		}
+		return in;
+	}
+	friend ostream & operator<<(ostream &stream, const mas &obj) {
+		for (int i = 0; i < obj.N; i++) {
+			stream << obj.m[i]<<" ";
+		}
+		return stream;
+	}
+	~mas() {
+		delete[]m;
+	}
+};
+
+
+
+int main() {
+	setlocale(0, "");
+	int N;
+	cout << "¬ведите размер массива" << endl;
+	cin >> N;
+	mas <int> h(N);
+	cin >> h;
+	int k;
+	cout << "”пор€дочить по возрастанию 1" << endl;
+	cout << "”пор€дочить по убыванию 2" << endl;
+	cin >> k;
+	if (k == 1) {
+		h.f1();
+	}
+	if (k == 2) {
+		h.f2();
+	}
+	cout << h << endl;
+	cout << "ƒемонстраци€ конструктора копировани€" << endl;
+	mas <int> n = h;
+	cout << n;
+	cin.get();
+	return 0;
+}

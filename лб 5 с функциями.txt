@@ -1,0 +1,145 @@
+/////////////////////////////h.///////////////////////////////
+#include <iostream>
+
+using namespace std;
+
+struct STUDENT {
+	char Name[15];
+	char Nazvanie[15];
+	char stile[15];
+	int Namber;
+};
+
+struct GROUP {
+	char Name[30];
+	int N;
+	STUDENT *Student;
+};
+void sortirovka(GROUP *Group);
+void poisk(GROUP *Group);
+STUDENT ReadStudent(istream &in);
+void WriteStudent(ostream &out, STUDENT Student);
+void ReadGroup(istream &in, GROUP *Group);
+void WriteGroup(ostream &out, GROUP Group);
+//////////////////////////////cpp.//////////////////////////
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+
+using namespace std;
+
+void sortirovka(GROUP *Group)
+{
+	STUDENT e;
+	for (int i = 0; i < Group->N; i++)
+	{
+		for (int j = 0; j < Group->N - 1; j++)
+		{
+			if (Group->Student[j].Namber > Group->Student[j + 1].Namber) {
+				e = Group->Student[j];
+				Group->Student[j] = Group->Student[j + 1];
+				Group->Student[j + 1] = e;
+			}
+		}
+	}
+}
+
+
+void poisk(GROUP *Group) {
+	STUDENT g;
+	char name[15];
+	cout << "Введите имя исполнителя для поиска" << endl;
+	cin >> name;
+	for (int j = 0; j < Group->N; j++)
+	{
+		if (strcmp(Group->Student[j].Name, name) == 0)    // вот тут)
+		{
+			//cout<<Group->Student[j];
+			cout << Group->Student[j].Nazvanie << endl;
+			cout << Group->Student[j].stile << endl;
+			cout << Group->Student[j].Namber << endl;
+		}
+
+	}
+
+
+}
+
+STUDENT ReadStudent(istream &in)
+{
+	STUDENT student;
+	in >> student.Name;
+	in >> student.Nazvanie;
+	in >> student.stile;
+	in >> student.Namber;
+	return student;
+}
+
+void WriteStudent(ostream &out, STUDENT Student)
+{
+	//out.width(8);
+	//out.fill('0');
+	out << Student.Name << " "
+		<< Student.Nazvanie << " "
+		<< Student.stile/*[0]*/ << ". "
+		<< Student.Namber/*[0]*/ << ".\n";
+}
+
+void ReadGroup(istream &in, GROUP *Group)
+{
+	in >> Group->Name;
+	in >> Group->N;
+	Group->Student = new STUDENT[Group->N];
+	for (int i = 0; i < Group->N; i++)
+	{
+		Group->Student[i] = ReadStudent(in);
+	}
+}
+
+void WriteGroup(ostream &out, GROUP Group)
+{
+	out << "Каталог музыкальных произведений " << Group.Name << endl;
+	for (int i = 0; i < Group.N; i++) WriteStudent(out, Group.Student[i]);
+}
+////////////////////////////////////////main///////////////////////////////
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+	setlocale(0, "");
+
+	char FileName[100];
+	cout << "Из какого файла вводить данные?\n";
+	cin.getline(FileName, sizeof(FileName));
+
+	GROUP Group;
+	// создать поток для ввода данных из файла
+	ifstream fin(FileName);
+
+	if (fin.is_open()) {
+		// прочитать группу из этого потока
+		ReadGroup(fin, &Group);
+		// закрыть поток
+		fin.close();
+
+		// вывести группу в поток cout (на экран)
+		WriteGroup(cout, Group);
+		poisk(&Group);
+		sortirovka(&Group);
+		ofstream fout("D:\\g.txt");
+		if (fout.is_open())
+		{
+			// записать группу в этот файл
+			WriteGroup(fout, Group);
+			fout.close();
+			cout << "Данные выведены в файл " << "D:\\g.txt" << endl;
+		}
+	}
+
+	Sleep(7654);
+	return 0;
+}

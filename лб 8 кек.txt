@@ -1,0 +1,219 @@
+students.h//////////////////////////////////////////////////////
+#pragma once
+#ifndef STUDENTS_H
+#define STUDENTS_H
+
+#include <string>
+#include <vector>
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
+class STUDENT {
+public:
+	string Name;
+	string Nazvanie;
+	string stile;
+	int Namber;
+	// дружественные функции - операторы
+	friend ostream& operator << (ostream &out, STUDENT Student);
+	friend istream& operator >> (istream &in, STUDENT &Student);
+	friend bool operator < (STUDENT stud1, STUDENT stud2);
+	friend bool operator==(STUDENT& stud, string& S);
+};
+
+
+class GROUP/*:public STUDENT*/ {
+	string Name;              // Название группы
+	vector<STUDENT> Students; // Контейнер (вектор) студентов
+public:
+	void sorti();
+	friend ostream& operator << (ostream &out, GROUP Group);
+	friend istream& operator >> (istream &in, GROUP &Group);
+	void poisk(const string value);
+};
+#endif
+students.cpp/////////////////////////////////////////////////////
+#include "pch.h"
+#include "students.h"
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+
+using namespace std;
+// ===== Оператор для сравнения двух студентов между собой =====
+bool operator < (STUDENT stud1, STUDENT stud2) {
+	// сравниваем по номеру студенческого билета
+	bool result = stud1.Namber < stud2.Namber;
+	return result;
+}
+
+// =========== Метод для упорядочения списка группы ============
+void GROUP::sorti() {
+	// выполняем сортировку контейнера Students с помощью
+	// библиотечного алгоритма sort
+	sort(this->Students.begin(), this->Students.end());
+	// по умолчанию порядок сортировки контейнера определяется
+	// перегруженным оператором <
+}
+
+bool operator == (STUDENT& stud, string& S)
+{
+	return stud.Name == S;
+}
+
+
+void GROUP::poisk(const string value)
+{
+
+	vector<STUDENT>::const_iterator it;
+	it = find_if(Students.begin(), Students.end(), [value](STUDENT& stud1) { return  stud1.Name == value; });
+	if (it == Students.end()) {
+		cout << "Не найден" << endl;
+		return;
+	}
+	else {
+		cout << *it << endl;
+	}
+}
+
+/*void GROUP::poisk(const string value) {
+	vector<STUDENT>::const_iterator it,it1,it2;
+	it1 = Students.begin();
+	it2 = Students.end();
+	while (it1 != it2) {
+		it = find_if(it1, it2, [value](STUDENT& stud1) { return  stud1.Name == value; });
+		cout << *it << endl;
+		++it1;
+	}
+}*/
+iostudent.h//////////////////////////////////////////////////////
+#pragma once
+#ifndef IOSTUDENT_H
+#define IOSTUDENT_H
+
+#include "students.h"
+
+
+// Ввод информации о студенте из потока
+istream& operator >> (istream &in, STUDENT &Student);
+
+// Вывод информации о студенте в выходной поток
+ostream& operator << (ostream &out, STUDENT Student);
+
+// Ввод информации о группе из входного потока
+istream& operator >> (istream &in, GROUP &Group);
+
+// Вывод информации о группе в выходной поток
+ostream& operator << (ostream &out, GROUP Group);
+
+// =============== конец заголовочного файла  ==================
+#endif
+iostudent.cpp////////////////////////////////////////////////////
+#include "pch.h"
+#include "iostudent.h"
+#include <iostream>
+#include <fstream>
+#include <iterator>
+#include <vector>
+
+
+using namespace std;
+
+istream& operator >> (istream &in, STUDENT & Student) {
+	in >> Student.Name;
+	in >> Student.Nazvanie;
+	in >> Student.stile;
+	in >> Student.Namber;
+	return in;
+}
+
+// ======= Вывод информации о студенте в выходной поток ========
+ostream& operator << (ostream &out, STUDENT Student) {
+	out << Student.Name << " "
+		<< Student.Nazvanie << " "
+		<< Student.stile << " "
+		<< Student.Namber << " ";
+	return out;
+}
+
+// ======= Ввод информации о группе из входного потока =========
+istream& operator >> (istream &in, GROUP & Group) {
+	in >> Group.Name;
+	Group.Students.clear();
+	// ввод списка студентов с использованием итераторов
+	istream_iterator<STUDENT> in_iter(in);
+	istream_iterator<STUDENT> in_end;
+	while (in_iter != in_end) {
+		STUDENT stud = *in_iter;
+		Group.Students.push_back(stud);
+		in_iter++;
+	}
+	return in;
+}
+
+// ====== Вывод информации о группе в выходной поток ===========
+ostream& operator << (ostream &out, GROUP Group) {
+	out << "Каталог музыкальных произведений " << Group.Name << endl;
+	// вывод списка студентов с использованием итераторов
+	vector<STUDENT>::iterator iter;
+	iter = Group.Students.begin();
+	while (iter != Group.Students.end()) {
+		out << *iter << endl;
+		iter++;
+	}
+	return out;
+}
+main/////////////////////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+
+#include "students.h"
+#include "iostudent.h"
+
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+	setlocale(0, "");
+	char FileName[100];
+	cout << "Из какого файла вводить данные?\n";
+	cin.getline(FileName, sizeof(FileName));
+
+	GROUP Group;
+	// создать поток для ввода данных из файла
+	ifstream fin(FileName);
+
+	if (fin.is_open()) {
+		// прочитать группу из этого потока
+		fin >> Group;
+		// закрыть поток
+		fin.close();
+
+		// упорядочить группу
+		Group.sorti();
+
+		// вывести группу в поток cout (на экран)
+		cout << Group;
+		cout << "Введите имя исполнителя для поиска" << endl;
+		string s;
+		cin >> s;
+		Group.poisk(s);
+		// создать поток для вывода данных в файл
+		ofstream fout("D:\\g.txt");
+		if (fout.is_open())
+		{
+			// записать группу в этот файл
+			fout << Group;
+			fout.close();
+			cout << "Данные выведены в файл " << "D:\\g.txt" << endl;
+		}
+	}
+	Sleep(7654);
+	return 0;
+}

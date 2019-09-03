@@ -1,0 +1,50 @@
+#include "pch.h"
+#include <iostream>
+#include <vector>
+#include <iterator>
+
+using namespace std;
+
+void f(vector<int> & v) {
+	vector <int> ::iterator iter1 = v.begin();
+	while (iter1 != v.end()) {
+		cin >>*iter1;
+		++iter1;
+	}
+}
+
+void f2(vector <int> &v) {
+	vector <int>::iterator iter3 = v.begin();
+	while (iter3 != v.end()) {
+		if (*iter3 > 0) {
+			break;
+		}
+		++iter3;
+	}
+	vector <int>::iterator iter4 = v.end();
+	while (iter4 != v.begin()) {
+		if (*(iter4-1) > 0) {
+			break;
+		}
+		--iter4;
+	}
+	int sum = 0;
+	while (iter3+1 != iter4-1) {
+		++iter3;
+		sum += *iter3;
+	}
+	cout << "Сумма равна = " << sum << endl;
+}
+
+int main()
+{
+	setlocale(0, "");
+	int N;
+	cout << "Введите количество элементов" << endl;
+	cin >> N;
+	vector <int> v(N);
+	f(v);
+	f2(v);
+	cin.get();
+	return 0;
+}

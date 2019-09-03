@@ -1,0 +1,156 @@
+#include "pch.h"
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <set>
+#include <iterator>
+#include <windows.h>
+
+using namespace std;
+
+class poezd {
+public:
+	int Namber;
+	string Stan;
+	double time;
+	friend bool operator < (poezd poezd1, poezd poezd2) {// для set что бы при добавлении сортировать
+		bool result = poezd1.Namber < poezd2.Namber;
+		return result;
+	}
+	friend istream &operator >>(istream &pot, poezd &a);
+};
+
+class vokzal {
+public:
+	set <poezd> d;
+	void ins();
+	void show() {
+		set <poezd>::iterator iter = d.begin();
+		while (iter != d.end()) {
+			poezd a = *iter;
+			cout << a.Namber <<" "<<a.Stan<<" "<<a.time<< endl;
+			++iter;
+		}
+	}
+	void zapros(int N) {
+		set <poezd>::iterator iter = d.begin();
+		poezd k;
+		while (iter != d.end()) {
+			poezd l = *iter;
+			if (l.Namber == N) {
+				cout << l.Stan <<" "<<l.time<< endl;
+			}
+			++iter;
+		}
+	}
+	void zaprostan(string s) {
+		set <poezd>::iterator iter = d.begin();
+		poezd k;
+		while (iter != d.end()) {
+			poezd l = *iter;
+			if (l.Stan == s) {
+				cout << l.Namber <<" "<<l.time<< endl;
+			}
+			++iter;
+		}
+	}
+	
+	friend istream &operator>>(istream &pot, vokzal &f);
+};
+
+istream &operator >>(istream &pot, poezd &poe) {
+	pot >> poe.Namber;
+	pot >> poe.Stan;
+	pot >> poe.time;
+	return pot;
+}
+
+istream &operator>>(istream &pot, vokzal &f) {
+	istream_iterator<poezd> in_iter(pot);
+	istream_iterator<poezd> in_end;
+	while (in_iter != in_end) {
+		poezd a = *in_iter;
+		f.d.insert(a);
+		in_iter++;
+	}
+	return pot;
+}
+
+void vokzal::ins(){
+poezd a;
+cout << "Введите номер поезда" << endl;
+cin >> a.Namber;
+cout << "Введите станцию" << endl;
+cin >> a.Stan;
+cout << "Введите время" << endl;
+cin >> a.time;
+d.insert(a);
+}
+
+void print() {
+	cout << "1.Ввод данных в систему" << endl;
+	cout << "2.Вывод сведений по всем поездам" << endl;
+	cout << "3.Вывод сведений по поезду с запрошенным номером" << endl;
+	cout << "4.Вывод сведений по тем поездам,которые следуют до запрошенной станции" << endl;
+	cout << "5.Очистить консоль" << endl;
+	cout << "6.Закрыть программу" << endl;
+	cout << "7.Ввод данных в систему через файл" << endl;
+}
+
+int main()
+{
+	setlocale(0, "");
+	string s;
+	int N;
+	vokzal f;
+	char k;
+	print();
+	do {
+		cin >> k;
+		switch (k)
+		{
+		case '1':
+			f.ins();
+			Sleep(10000);
+			system("cls");
+			print();
+			break;
+		case '2':
+			f.show();
+			Sleep(10000);
+			system("cls");
+			print();
+			break;
+		case '3':
+			cout << "Введите номер поезда" << endl;
+			cin >> N;
+			f.zapros(N);
+			Sleep(10000);
+			system("cls");
+			print();
+			break;
+		case '4':
+			cout << "Введите станцию" << endl;
+			cin >> s;
+			f.zaprostan(s);
+			Sleep(10000);
+			system("cls");
+			print();
+			break;
+		case '5':
+			system("cls");
+			break;
+		case'6':
+			break;
+		case '7':
+			ifstream fin("D:\\g.txt");
+			if (fin.is_open()) {
+				fin >> f;
+				fin.close();
+			}
+			break;
+		}
+	} while (k != '6');
+	cin.get();
+	return 0;
+}
