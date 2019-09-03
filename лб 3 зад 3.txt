@@ -1,0 +1,78 @@
+.486
+.model flat, stdcall
+option casemap :none 
+include windows.inc
+include kernel32.inc
+include masm32.inc
+includelib kernel32.lib
+includelib masm32.lib
+.data
+	inputBuffer db 0
+        buffer db 1000 dup (" ") ;1
+.data?
+	inputHandle dd ?
+	outputHandle dd ?
+	numberOfChars dd ?
+	chislo1 dd ?
+.code
+entryPoint:
+	
+	push STD_INPUT_HANDLE    
+	call GetStdHandle         
+	mov inputHandle, EAX     
+	
+	push STD_OUTPUT_HANDLE
+	call GetStdHandle
+	mov outputHandle, EAX
+	
+	push NULL
+        push offset numberOfChars
+        push 1000
+        push offset buffer
+        push inputHandle
+        call ReadConsole                 
+                                          
+        mov EDX, offset buffer           
+        mov EAX, numberOfChars            
+        mov byte ptr [ EDX + EAX - 2 ], 0
+        
+        push offset buffer
+        call lstrlen
+        
+        MOV EBX,EAX
+        
+        CMP byte ptr buffer , '-'
+        JE Metka1
+        JMP Metka2
+        Metka1:
+        dec EBX
+        JMP Metka3
+        Metka2:
+
+        Metka3:
+        push offset buffer
+        push EBX
+        call dwtoa
+        
+        push offset buffer       
+                          
+        call lstrlen              
+                          
+        push NULL
+        push offset numberOfChars
+        push EAX                  
+                          
+        push offset buffer
+        push outputHandle
+        call WriteConsole 
+         
+       	push offset numberOfChars
+	push 1
+	push offset inputBuffer
+	push inputHandle
+	call ReadConsole
+
+	push 0
+	call ExitProcess
+
+end entryPoint

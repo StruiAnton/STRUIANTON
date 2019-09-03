@@ -1,0 +1,357 @@
+#ifndef PCH_H
+#define PCH_H
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+class robot {
+private:
+	int x, y, kolmetok;
+public:
+	robot();
+	int getX() const;
+	void X(int x);
+	int getY() const;
+	void Y(int y);
+	int getkolmetok() const;
+	void kolmetokBxpan(int k);
+};
+
+#endif
+//////////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+
+robot::robot() {
+	x = 0;  
+	y = 0;  
+	kolmetok = 0;  
+}
+
+int robot::getX() const {
+	return x;
+}
+
+void robot::X(int x) {
+	robot::x = x;
+}
+
+int robot::getY() const {
+	return y;
+}
+
+void robot::Y(int y) {
+	robot::y = y;
+}
+
+int robot::getkolmetok() const {
+	return kolmetok;
+}
+
+void robot::kolmetokBxpan(int k) {
+	robot::kolmetok = k;
+}
+/////////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+
+int memory[256] = { 0 };   //память
+int rg[8] = { 0 };    //регистры
+int karta[12][12];    //карта для перемещения
+int kolkomand = 0;     //количество команд
+bool flag = false;    //прочитать флаг команды
+
+robot a = robot();
+
+/*
+легенда карты:
+0 - непроходимая клетка
+1 - проходимая пустая ячейка
+2 - проходимая с меткой
+*/
+
+// чтение из файла
+void cinfile() {
+	ifstream file("D:\\f.txt");
+	int x, y, kolmetok;
+	for (int i = 1; i < 11; i++)
+		for (int j = 1; j < 11; j++)
+			file >> karta[i][j];     //прочитать карту
+	file >> x >> y >> kolmetok;       //прочитать начальные параметры робота
+	a.X(x);
+	a.Y(y);
+	a.kolmetokBxpan(kolmetok);
+	file.close();
+	ifstream file2("D:\\g.txt");
+	while (!file2.eof()) {       
+		file2 >> memory[kolkomand];      //запись команд в память
+		kolkomand++;
+	}
+	file2.close();
+}
+
+// запись в файл
+void coutfile(char f) {
+	ofstream file("D:\\j1.txt");
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			file << karta[i][j] << " ";
+		file << endl;
+	}
+	file << a.getX() << " " << a.getY() << " " <<a.getkolmetok() << endl;
+	for (int i = 0; i < 8; i++)
+		file << int(rg[i]) << " ";
+	file << endl;
+	for (int i = 0; i < 256; i++)
+		file << int(memory[i]) << endl;
+	if (!f)
+		file << "Proizowla aBarinaR OctanoBKA";
+	else
+		file << "Robot wtatno BKL";
+	file.close();
+	exit(0);
+}
+
+// чтение с устройства ввода
+int memory255() {
+	if (flag) {
+		int rezultat = 0;             //результат выполнения команды
+		int t255 = memory[255];
+		switch (t255) {
+		case 0: {
+			if (karta[a.getX()][a.getY()] == 2)
+				rezultat = 255;
+		}
+				break;
+		case 1:
+			rezultat = a.getkolmetok();
+			break;
+		case 2: {
+			if (karta[a.getX()][a.getY()] == 1 && a.getkolmetok() > 0) {
+				rezultat = 255;
+				karta[a.getX()][a.getY()] = 2;
+				a.kolmetokBxpan(a.getkolmetok() - 1);
+			}
+		}
+				break;
+		case 3: {
+			if (karta[a.getX()][a.getY()] == 2 && a.getkolmetok() < 10) {
+				rezultat = 255;
+				karta[a.getX()][a.getY()] = 1;
+				a.kolmetokBxpan(a.getkolmetok() + 1);
+			}
+		}
+				break;
+		case 4: {
+			if (karta[a.getX() - 1][a.getY()] != 0 && a.getX() > 1) {
+				rezultat = 255;
+				a.X(a.getX() - 1);
+			}
+		}
+				break;
+		case 5: {
+			if (karta[a.getX()][a.getY() + 1] != 0 && a.getY() < 10)
+			{
+				rezultat = 255;
+				a.Y(a.getY() + 1);
+			}
+		}
+				break;
+		case 6: {
+			if (karta[a.getX() + 1][a.getY()] != 0 && a.getX() < 10)
+			{
+				rezultat = 255;
+				a.X(a.getX() + 1);
+			}
+		}
+				break;
+		case 7: {
+			if (karta[a.getX()][a.getY() - 1] != 0 && a.getY() > 1) {
+				rezultat = 255;
+				a.Y(a.getY() - 1);
+			}
+		}
+				break;
+		case 255:
+			coutfile(1);
+			break;
+		default:
+			break;
+		}
+		memory[255] = rezultat;
+		flag = false;
+		return rezultat;
+	}
+	else {
+		coutfile(0);
+	}
+}
+
+// прочитать значение по адресу
+int adresprochit(int i) {
+	if (i == 255)
+		return memory255();
+	return memory[i];
+}
+
+
+// записать значение по адресу
+void adreszapicat(int i, int k) {
+	if (i == 255)
+		flag = true;
+	memory[i] = k;
+}
+
+// элементы алу
+
+enum command {
+	com1, com2, com3, com4, com5, com6, com7, com8, com9, com10, com11, com12, com13, com14, com15, com16
+};
+
+// информация о команде
+struct commandinfo {
+	enum command type; // Рабочий код
+	int i1, i2;
+};
+
+// расшифровывать команды
+void decodecommand(int command, struct commandinfo *info) {
+	if (command < 128) {
+		info->type = com1;
+		info->i1 = command;
+	}
+	else if (command == 128) {
+		info->type = com2;
+	}
+	else if (command > 128 && command < 136) {
+		info->type = com3;
+		info->i1 = command - 128;
+	}
+	else if (command == 136) {
+		info->type = com4;
+	}
+	else if (command > 136 && command < 144) {
+		info->type = com5;
+		info->i1 = command - 136;
+	}
+	else if (command >= 144 && command < 152) {
+		info->type = com6;
+		info->i1 = command - 144;
+	}
+	else if (command >= 152 && command < 160) {
+		info->type = com7;
+		info->i1 = command - 152;
+	}
+	else if (command >= 160 && command < 168) {
+		info->type = com8;
+		info->i1 = command - 160;
+	}
+	else if (command >= 168 && command < 176) {
+		info->type = com9;
+		info->i1 = command - 168;
+	}
+	else if (command >= 176 && command < 184) {
+		info->type = com10;
+		info->i1 = command - 176;
+	}
+	else if (command >= 184 && command < 192) {
+		info->type = com11;
+		info->i1 = command - 184;
+	}
+	else if (command == 192) {
+		info->type = com12;
+	}
+	else if (command > 192 && command < 200) {
+		info->type = com13;
+		info->i1 = command - 192;
+	}
+	else {
+		info->i1 = (command - 192) / 8;
+		info->i2 = (command - 192) % 8;
+		if (info->i2 == 0) {
+			info->type = com14;
+		}
+		else {
+			if (info->i1 == info->i2)
+				info->type =com15;
+			else
+				info->type = com16;
+		}
+	}
+}
+
+// основной цикл устройства управления
+void mainyprav() {
+	int pc = 0, temp;
+	for (;;) {
+		int command = adresprochit(pc);
+		pc++;
+		struct commandinfo info;
+		decodecommand(command, &info);
+		switch (info.type) {
+		case com1:
+			rg[0] = info.i1;
+			break;
+		case com2:
+			rg[0] = rg[0] * 2 % 256;
+			break;
+		case com3:
+			rg[0] = rg[info.i1];
+			break;
+		case com4:
+			rg[0] = (rg[0] + 1) % 256;
+			break;
+		case com5:
+			rg[info.i1] = rg[0];
+			break;
+		case com6:
+			rg[0] = adresprochit(rg[info.i1]);
+			break;
+		case com7:
+			adreszapicat(rg[info.i1], rg[0]);
+			break;
+		case com8:
+			rg[0] = (rg[0] + rg[info.i1]) % 256;
+			break;
+		case com9:
+			rg[0] = (rg[0] - rg[info.i1] + 256) % 256;
+			break;
+		case com10:
+			rg[0] = (rg[0] * rg[info.i1]) % 256;
+			break;
+		case com11:
+			rg[0] = (rg[0] / rg[info.i1]) % 256;
+			break;
+		case com12:
+			rg[0]--;
+			break;
+		case com13: {
+			temp = rg[0];
+			rg[0] = rg[info.i1];
+			rg[info.i1] = temp;
+		}
+					 break;
+		case com14: {
+			temp = rg[0];
+			rg[0] = adresprochit(info.i1);
+			adreszapicat(info.i1, temp);
+		}
+					 break;
+		case com15:
+			pc = rg[info.i1];
+			break;
+		case com16:
+			if (rg[info.i1] < rg[info.i2])
+				pc = rg[0];
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+int main() {
+	cinfile();	//чтение из файла
+	mainyprav();	//главный цикл
+	return 0;
+}

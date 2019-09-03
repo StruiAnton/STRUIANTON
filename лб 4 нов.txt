@@ -32,6 +32,7 @@ f:
         mov EAX, 101
 	mov EDX,0 
 	div EDI
+	INC EDX
 	mov dword ptr [EBX], EDX
         INC EDI
         INC ESI          
@@ -175,7 +176,7 @@ Nachalo3:
     INC ESI
     JMP Nachalo3
 Konec3:
-      
+    mov dword ptr [EBX],2  
 RET
 
 entryPoint:

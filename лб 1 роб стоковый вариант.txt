@@ -1,0 +1,372 @@
+#ifndef PCH_H
+#define PCH_H
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+class robot {
+	unsigned char x, y, c;
+public:
+	robot();
+	int getX() const;
+	void setX(int x);
+	int getY() const;
+	void setY(int y);
+	int getC() const;
+	void setC(int counter);
+};
+
+#endif 
+////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+
+robot::robot() {
+	x = 0;  //координата х
+	y = 0;  //координата у
+	c = 0;  //хранения метак
+}
+
+int robot::getX() const {
+	return x;
+}
+
+void robot::setX(int x) {
+	robot::x = x;
+}
+
+int robot::getY() const {
+	return y;
+}
+
+void robot::setY(int y) {
+	robot::y = y;
+}
+
+int robot::getC() const {
+	return c;
+}
+
+void robot::setC(int counter) {
+	robot::c = counter;
+}
+//////////////////////////////////////////////////////////////////////////
+#include "pch.h"
+
+
+int memory[256] = { 0 },   //память
+rg[8] = { 0 },    //регистры
+map[12][12],    //карта для перемещения
+comandamount = 0;     //количество команд
+bool bug = false;    //прочитать флаг команды
+
+robot rob = robot();
+
+/*
+легенда карты:
+0 - непроходимая клетка
+1 - проходимая пустая ячейка
+2 - проходимая с меткой
+*/
+
+// чтение из файла
+void read_data() {
+	ifstream file("D:\\f.txt");
+	int x, y, c;
+	for (int i = 1; i < 11; i++)
+		for (int j = 1; j < 11; j++)
+			file >> map[i][j];     //прочитать карту
+	file >> x >> y >> c;       //прочитать начальные параметры робота
+	rob.setX(x);
+	rob.setY(y);
+	rob.setC(c);
+	file.close();
+	ifstream file2("D:\\g.txt");
+	while (!file2.eof()) {       //до конца файла
+		file2 >> memory[comandamount];      //запись команд в память
+		comandamount++;
+	}
+	file2.close();
+}
+
+// запись в файл
+void create_data(char f) {
+	ofstream file("D:\\j.txt");
+	for (int i = 1; i < 11; i++) {
+		for (int j = 1; j < 11; j++)
+			file << map[i][j] << " ";
+		file << endl;
+	}
+	file << rob.getX() << " " << rob.getY() << " " << rob.getC() << endl;
+	for (int i = 0; i < 8; i++)
+		file << int(rg[i]) << " ";
+	file << endl;
+	for (int i = 0; i < 256; i++)
+		file << int(memory[i]) << endl;
+	if (!f)
+		file << "Crash";
+	else
+		file << "No crashes";
+	file.close();
+	exit(0);
+}
+
+// чтение с устройства ввода
+int read_io() {
+	if (bug) {
+		int newval = 0;             //результат выполнения команды
+		int value = memory[255];
+		switch (value) {
+		case 0: {
+			if (map[rob.getX()][rob.getY()] == 2)
+				newval = 255;
+		}
+				break;
+		case 1:
+			newval = rob.getC();
+			break;
+		case 2: {
+			if (map[rob.getX()][rob.getY()] == 1 && rob.getC() > 0) {
+				newval = 255;
+				map[rob.getX()][rob.getY()] = 2;
+				rob.setC(rob.getC() - 1);
+			}
+		}
+				break;
+		case 3: {
+			if (map[rob.getX()][rob.getY()] == 2 && rob.getC() < 10) {
+				newval = 255;
+				map[rob.getX()][rob.getY()] = 1;
+				rob.setC(rob.getC() + 1);
+			}
+		}
+				break;
+		case 4: {
+			if (map[rob.getX() - 1][rob.getY()] != 0) {
+				newval = 255;
+				rob.setX(rob.getX() - 1);
+			}
+		}
+				break;
+		case 5: {
+			if (map[rob.getX()][rob.getY() + 1] != 0)
+			{
+				newval = 255;
+				rob.setY(rob.getY() + 1);
+			}
+		}
+				break;
+		case 6: {
+			if (map[rob.getX() + 1][rob.getY()] != 0)
+			{
+				newval = 255;
+				rob.setX(rob.getX() + 1);
+			}
+		}
+				break;
+		case 7: {
+			if (map[rob.getX()][rob.getY() - 1] != 0) {
+				newval = 255;
+				rob.setY(rob.getY() - 1);
+			}
+		}
+				break;
+		case 255:
+			create_data(1);
+			break;
+		default:
+			break;
+		}
+		memory[255] = newval;
+		bug = false;
+		return newval;
+	}
+	else {
+		create_data(0);
+	}
+}
+
+// прочитать значение по адресу
+int read_addr(int addr) {
+	if (addr == 255)
+		return read_io();
+	return memory[addr];
+}  
+
+
+// записать значение по адресу
+void write_addr(int addr, int val) {
+	if (addr == 255)
+		bug = true;
+	memory[addr] = val;
+}
+
+// элементы алу
+
+enum command_type {
+	COM_1,      // Код деятельности, нагружая в r0
+	COM_2,
+	COM_3,
+	COM_4,
+	COM_5,
+	COM_6,
+	COM_7,
+	COM_8,
+	COM_9,
+	COM_10,
+	COM_11,
+	COM_12,
+	COM_13,
+	COM_14,
+	COM_15,
+	COM_16
+};
+
+// информация о команде
+struct command_info {
+	enum command_type type; // Рабочий код
+	int addr1, addr2;
+};
+
+// расшифровывать команды
+void decode_command(int command, struct command_info *info) {
+	if (command < 128) {
+		info->type = COM_1;
+		info->addr1 = command;
+	}
+	else if (command == 128) {
+		info->type = COM_2;
+	}
+	else if (command > 128 && command < 136) {
+		info->type = COM_3;
+		info->addr1 = command - 128;
+	}
+	else if (command == 136) {
+		info->type = COM_4;
+	}
+	else if (command > 136 && command < 144) {
+		info->type = COM_5;
+		info->addr1 = command - 136;
+	}
+	else if (command >= 144 && command < 152) {
+		info->type = COM_6;
+		info->addr1 = command - 144;
+	}
+	else if (command >= 152 && command < 160) {
+		info->type = COM_7;
+		info->addr1 = command - 152;
+	}
+	else if (command >= 160 && command < 168) {
+		info->type = COM_8;
+		info->addr1 = command - 160;
+	}
+	else if (command >= 168 && command < 176) {
+		info->type = COM_9;
+		info->addr1 = command - 168;
+	}
+	else if (command >= 176 && command < 184) {
+		info->type = COM_10;
+		info->addr1 = command - 176;
+	}
+	else if (command >= 184 && command < 192) {
+		info->type = COM_11;
+		info->addr1 = command - 184;
+	}
+	else if (command == 192) {
+		info->type = COM_12;
+	}
+	else if (command > 192 && command < 200) {
+		info->type = COM_13;
+		info->addr1 = command - 192;
+	}
+	else {
+		info->addr1 = (command - 192) / 8;
+		info->addr2 = (command - 192) % 8;
+		if (info->addr2 == 0) {
+			info->type = COM_14;
+		}
+		else {
+			if (info->addr1 == info->addr2)
+				info->type = COM_15;
+			else
+				info->type = COM_16;
+		}
+	}
+}
+
+// основной цикл устройства управления
+void main_loop() {
+	int pc = 0, temp;
+	for (;;) {
+		int command = read_addr(pc);
+		pc++;
+		struct command_info info;
+		decode_command(command, &info);
+		switch (info.type) {
+		case COM_1:
+			rg[0] = info.addr1;
+			break;
+		case COM_2:
+			rg[0] = rg[0] * 2 % 256;
+			break;
+		case COM_3:
+			rg[0] = rg[info.addr1];
+			break;
+		case COM_4:
+			rg[0] = (rg[0] + 1) % 256;
+			break;
+		case COM_5:
+			rg[info.addr1] = rg[0];
+			break;
+		case COM_6:
+			rg[0] = read_addr(rg[info.addr1]);
+			break;
+		case COM_7:
+			write_addr(rg[info.addr1], rg[0]);
+			break;
+		case COM_8:
+			rg[0] = (rg[0] + rg[info.addr1]) % 256;
+			break;
+		case COM_9:
+			rg[0] = (rg[0] - rg[info.addr1] + 256) % 256;
+			break;
+		case COM_10:
+			rg[0] = (rg[0] * rg[info.addr1]) % 256;
+			break;
+		case COM_11:
+			rg[0] = (rg[0] / rg[info.addr1]) % 256;
+			break;
+		case COM_12:
+			rg[0]--;
+			break;
+		case COM_13: {
+			temp = rg[0];
+			rg[0] = rg[info.addr1];
+			rg[info.addr1] = temp;
+		}
+					 break;
+		case COM_14: {
+			temp = rg[0];
+			rg[0] = read_addr(info.addr1);
+			write_addr(info.addr1, temp);
+		}
+					 break;
+		case COM_15:
+			pc = rg[info.addr1];
+			break;
+		case COM_16:
+			if (rg[info.addr1] < rg[info.addr2])
+				pc = rg[0];
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+int main() {
+	read_data();	//чтение из файла
+	main_loop();	//главный цикл
+	return 0;
+}
