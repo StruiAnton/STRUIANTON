@@ -1,0 +1,63 @@
+http://www.e-maxx-ru.1gb.ru/algo/maximum_average_segment
+///////////////////////////////////////////////
+#include "pch.h"
+#include <iostream>
+
+using namespace std;
+
+void f(int *a, int N) {
+	for (int i = 0; i < N; i++) {
+		cout << a[i] << " ";
+	}
+	cout << endl;
+}
+
+
+int main()
+{
+	setlocale(0, "");
+	int *a;
+	int N;
+	cout << "Введите количество дней" << endl;
+	cin >>N;
+	int k;
+	cout << "Введите стоимость акции в 1 день" << endl;
+	cin >> k;
+	cout << "Введите данные" << endl;  
+	a = new int[N];
+	a[0] = 0;
+	int y=k;
+	for (int i = 1; i < N; i++) {
+		int l;
+		cin >> l;
+		int o = l - y;
+		y = l;
+		a[i] = o;
+	}
+	cout << "Массив изменения цены по сравнению с предыдущем днем" << endl;
+	f(a, N);
+	int max = a[0],
+		maxl = 0,
+		maxr = 0,
+		sum = 0,
+		minsum = 0,
+		minpos = -1;
+	for (int r = 0; r < N; ++r) {
+		sum += a[r];
+
+		int cur = sum - minsum;
+		if (cur > max) {
+			max = cur;
+			maxl = minpos + 1;
+			maxr = r;
+		}
+
+		if (sum < minsum) {
+			minsum = sum;
+			minpos = r;
+		}
+	}
+	cout <<"День покупки акции "<<maxl <<" День продажи "<< maxr+1<<" Максимальная прибыль с 1 акции = "<<max << endl;
+	delete[]a;
+	return 0;
+}

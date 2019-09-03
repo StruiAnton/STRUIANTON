@@ -1,0 +1,148 @@
+//////////////////////h.///////////////////////////////////////////////
+#pragma once
+#ifndef HEADER_H
+#define HEADER_H
+
+#include <iostream>
+#include <Windows.h>
+
+class d_heap {
+private:
+	const int d = 3;
+	int N;
+	int* HEAP;
+	int h;//счетчик
+public:
+	d_heap(int _N);
+	void add(int a);
+	void delet();
+	void show(int s,int leavel);
+	void print();
+	~d_heap();
+};
+
+#endif
+///////////////////////////cpp./////////////////////////////////////////
+#include "Header.h"
+
+using namespace std;
+
+d_heap::d_heap(int _N) {
+	N = _N;
+	HEAP = new int[N];
+	h = 0;
+}
+
+d_heap::~d_heap() {
+	delete[]HEAP;
+}
+
+void d_heap::add(int a) {
+	HEAP[h] = a;
+	bool t = false;
+	int s = h;
+	while (t != true) {
+		if (HEAP[(s - 1) / d] > HEAP[s]) {
+			swap(HEAP[s], HEAP[(s - 1) / d]);
+			s = (s - 1) / d;
+		}
+		else {
+			t = true;
+		}
+	}
+	h += 1;
+}
+
+void d_heap::show(int s,int level) {
+	if (s < h) {
+		if (s == 0) {
+			show(s+1, level + 1);
+			cout << HEAP[s];
+			show(s + 2, level + 1);
+			cout << endl;
+			show(s + 3, level + 1);
+		}
+		else {
+			show((s * d) + 1, level + 1);
+			for (int i = 0; i < level; i++) {
+				cout << "\t";
+			}
+			cout << HEAP[s] << endl;
+			show((s * d) + 2, level + 1);
+			cout << endl;
+			show((s * d) + 3, level + 1);
+		}
+	}
+}
+
+void d_heap::print() {
+	return show(0, 0);
+}
+
+void d_heap::delet() {
+	int s = 0;
+	bool t = false;
+	while (t != true) {
+		int min;
+		if (s == 0) {
+			min = s + 1;
+			for (int i = 1; i < d; i++) {
+				if (HEAP[min] > HEAP[min + i]) {
+					min = min + i;
+				}
+			}
+			HEAP[s] = HEAP[min];
+			s = min;
+		}
+		else if(s!=0 && (s*d)+1<h){
+			min = (s * d) + 1;
+			for (int i = 1; i < d; i++) {
+				if (HEAP[min] > HEAP[min + i]) {
+					min = min + i;
+				}
+			}
+			if (min == h) {
+				HEAP[s] = HEAP[min-1];
+				s = min-1;
+			}
+			else {
+				HEAP[s] = HEAP[min];
+				s = min;
+			}
+		}
+		else {
+			HEAP[s] = HEAP[h - 1];
+			h -= 1;
+			t = true;
+		}
+	}
+}
+/////////////////////////main//////////////////////////////////////////////////////
+#include "Header.h"
+
+using namespace std;
+
+int main()
+{
+    setlocale(0,"");
+	cout << "Введите колличество элементов кучи" << endl;
+	int N;
+	cin >> N;
+	d_heap a(N);
+	for (int i = 0; i < N; i++) {
+		int d;
+		cin >> d;
+		a.add(d);
+	}
+	cout << "Куча" << endl;
+	a.print();
+	Sleep(20000);
+	system("cls");
+	cout << "Куча" << endl;
+	a.delet();
+	a.print();
+	a.~d_heap();
+	system("pause");
+	return 0;
+}
+

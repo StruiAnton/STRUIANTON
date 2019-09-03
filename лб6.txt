@@ -1,0 +1,96 @@
+#include <iostream>
+#include<cstdlib>
+#include<ctime>
+#include<fstream>
+
+using namespace std;
+
+int I = 1;
+
+void print(int* a) {
+	ofstream f;
+	f.open("D:\\f.txt", ios::out);
+	for (int i = 0; i < 10000; i++) {
+		int y = a[i];
+		f << y << " ";
+	}
+	f.close();
+	return;
+}
+
+int hashfuncia(int k) {
+	return (k % 10000000);
+}
+
+int kvadratoprobovanie(int i) {
+	int adres = i + (10000 * I) + (I * I);
+	return adres;
+}
+
+
+void randomkey(int* key, int N) {
+	srand(time(NULL));
+	for (int i = 0; i < N; i++) {
+		int h;
+		int o = rand() % 2 + 1;
+		if (o == 1) {
+			h = rand() % RAND_MAX + 1;
+		}
+		if (o == 2) {
+			h = (double)rand() / (RAND_MAX + 1) * (9999999 - 1000000) + 1000000;
+		}
+		key[i] = h;
+	}
+}
+
+void poisk(int* a, int u) {
+	int h = hashfuncia(u);
+	if (a[h] == 0) {
+		cout << "Не найдено" << endl;
+	}
+	else {
+		cout << a[h] << endl;
+		cout << h << endl;
+	}
+}
+
+int main()
+{
+	setlocale(0, "");
+	cout << "Введите N" << endl;
+	int N;
+	cin >> N;
+	int* a = new int[10000000]();
+	int* key = new int[N]();
+	randomkey(key, N);
+	for (int i = 0; i < N; i++) {
+		int k = key[i];
+		int p = hashfuncia(k);
+		if (a[i] == p) {
+			int adres = kvadratoprobovanie(p);
+			if (a[adres] != 0) {
+				I += 1;
+				while (a[adres] != 0 && adres < N) {
+					adres = kvadratoprobovanie(p);
+					I += 1;
+				}
+				a[adres] = k;
+				I = 1;
+			}
+			else {
+				a[adres] = k;
+			}
+		}
+		else {
+			a[p] = k;
+		}
+	}
+	print(a);
+	cout << "Введите ключ для поиска" << endl;
+	int u;
+	cin >> u;
+	poisk(a, u);
+	delete[]a;
+	delete[]key;
+	return 0;
+}

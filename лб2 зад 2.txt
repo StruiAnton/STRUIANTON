@@ -1,0 +1,42 @@
+#include "pch.h"
+#include <iostream>
+
+using namespace std;
+
+int k = 0;
+
+void rec(int N) {
+	if (N % 3 == 0 && N!=1) {
+		k += 1;
+		return rec(N / 3);
+	}
+	if (N % 2 == 0 && N != 1) {
+		k += 1;
+		return rec(N / 2);
+	}
+	if (N == 1) {
+		k += 1;
+		return;
+	}
+	if (N % 2 != 0 && N % 3 != 0) {
+		int y = N / 3;
+		k += 1;
+		int o = y*3;
+		while (o!= N) {
+			o += 1;
+			k += 1;
+		}
+		return rec(y);
+	}
+}
+
+int main()
+{
+	setlocale(0, "");
+	int N;
+	cout << "¬ведите число>0" << endl;
+	cin >> N;
+	rec(N);
+	cout << k << endl;
+	return 0;
+}

@@ -1,0 +1,221 @@
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+struct stek {
+	char x;
+	stek* Next, * Head;
+};
+
+void add(char x, stek*& Mystek) {
+	stek* temp = new stek;
+	temp->x = x;
+	temp->Next = Mystek->Head;
+	Mystek->Head = temp;
+}
+
+void show(stek* Mystek) {
+	stek* temp = Mystek->Head;
+	cout << temp->x << " ";
+	temp = temp->Next;
+}
+
+void dele(stek* Mystek) {
+	stek* temp = Mystek->Head->Next;
+	delete Mystek->Head;
+	Mystek->Head = temp;
+}
+
+struct Node
+{
+	int data;
+	Node* next;
+};
+struct Queue
+{
+	Node* first;
+	Node* last;
+};
+void Creation(Queue* Q)
+{
+	Q->first = new Node;
+	Q->first->next = NULL;
+	Q->last = Q->first;
+}
+
+int Top(Queue* Q)
+{
+	return Q->first->next->data;
+}
+void Add(Queue* Q, int value)
+{
+	Q->last->next = new Node;
+	Q->last = Q->last->next;
+	Q->last->data = value;
+	Q->last->next = NULL;
+}
+void Delete(Queue* Q)
+{
+	Q->first = Q->first->next;
+}
+
+struct dek {
+	char x;
+	dek* Next;
+	dek* Head;
+};
+struct DEK {
+	dek* pbeg;
+	dek* pend;
+};
+
+void creation(DEK* d, char u) {
+	d->pbeg = new dek;
+	d->pbeg->x = u;
+	d->pbeg->Next = d->pbeg->Head = NULL;
+	d->pend = d->pbeg;
+
+}
+
+
+void addnacalo(DEK* d, char u) {
+	dek* pv = new dek;
+	pv->x = u;
+	pv->Next = NULL;
+	pv->Head = d->pbeg;
+	d->pbeg->Next = pv;
+	d->pbeg = pv;
+}
+
+void addconec(DEK* d, int u) {
+	dek* pv = new dek;
+	pv->x = u;
+	pv->Head = NULL;
+	pv->Next = d->pend;
+	d->pend->Head = pv;
+	d->pend = pv;
+}
+
+char dekkonec(DEK* d) {
+	char temp = d->pend->x;
+	dek* pv = d->pend;
+	d->pend = d->pend->Next;
+	delete pv;
+	return temp;
+}
+
+char deknachalo(DEK* d) {
+	char temp = d->pbeg->x;
+	dek* pv = d->pbeg;
+	d->pbeg = d->pbeg->Head;
+	delete pv;
+	return temp;
+}
+
+int i = 0;
+int h = 0;
+
+int main() {
+	setlocale(0, "");
+	stek* Mystek = new stek;
+	Mystek->Head = NULL;
+	stek* Mystek1 = new stek;
+	Mystek1->Head = NULL;
+	stek* Mystek2 = new stek;
+	Mystek2->Head = NULL;
+	for (;;) {
+		int k = rand() % 3 + 1;
+		if (k == 1) {
+			add('*', Mystek);//добавления
+			add('(', Mystek1);
+			add('&', Mystek2);
+			i += 1;
+			cout << "Продукты доставленны" << endl;
+			cout << "Все продукты" << " " << i * 3 << endl;
+			Sleep(3000);
+			system("cls");
+		}
+		if (k == 2) {
+			Queue Q;
+			Creation(&Q);
+			for (int i = 1; i < 6; i++) {
+				Add(&Q, i);
+			}
+			cout << "5 роботов приехали на склад" << endl;
+			Sleep(3000);
+			while (Mystek->Head != NULL) {
+				int y = Top(&Q);
+				cout << "Робот " << y << " берет продукты" << " ";
+				show(Mystek);
+				show(Mystek1);
+				show(Mystek2);
+				cout << endl;
+				Sleep(2000);
+				cout << "Делает салат" << endl;
+				dele(Mystek);
+				dele(Mystek1);
+				dele(Mystek2);
+				Sleep(2000);
+				i--;
+				cout << "Робот " << y << " поехал в цех" << endl;
+				h += 1;
+				Sleep(2000);
+				Delete(&Q);
+				cout << "Робот " << y << " вернулся на склад" << endl;
+				Add(&Q, y);
+				Sleep(2000);
+			}
+			for (int k = 0; k < 5; k++) {
+				Delete(&Q);
+			}
+			Sleep(3000);
+			system("cls");
+		}
+		if (k == 3) {
+			if (h != 0) {
+				int p = 0;
+				DEK d;
+				creation(&d, '@');
+				h -= 1;
+				p += 1;
+				while (h != 0) {
+					int g = rand() % 2 + 1;
+					if (g == 1) {
+						addnacalo(&d, '@');
+						h -= 1;
+						p += 1;
+					}
+					if (g == 2) {
+						addconec(&d, '@');
+						h -= 1;
+						p += 1;
+					}
+				}
+				while (p != 0) {
+					if (p==1) {
+						cout << "Робот 1 положил салат " << deknachalo(&d) << " в машину " << endl;
+						p -= 1;
+						Sleep(3000);
+					}
+					else {
+						cout << "Робот 1 положил салат " << deknachalo(&d) << " в машину " << endl;
+						p -= 1;
+						cout << "Робот 2 положил салат " << dekkonec(&d) << " в машину " << endl;
+						p -= 1;
+						Sleep(3000);
+					}
+				}
+				cout << "Машина увезла салаты в магазин" << endl;
+				Sleep(3000);
+				system("cls");
+			}
+			else {
+				cout << "Нет салатов  в сортировочном цехе" << endl;
+				Sleep(3000);
+				system("cls");
+			}
+		}
+	}
+	return 0;
+}

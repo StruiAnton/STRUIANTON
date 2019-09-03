@@ -1,0 +1,713 @@
+////////////////////arta.h//////////////////////////////////////////////////////////////////
+#pragma once
+#ifndef TREE_H
+#define TREE_H
+
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+
+struct Node {
+	int x;
+	Node* l;
+	Node* r;
+	Node* parent;
+};
+
+struct list {
+	int u;
+	int glub;
+	int opredlist;//0-left 1-right
+	int level;
+	Node* y;
+};
+
+struct putmax {
+	int put;
+	Node* A;
+	Node* B;
+	int opredelitA;
+	int opredelitB;
+};
+
+class tree {
+private:
+	Node* TREE;
+	//Node* parent = NULL;
+	int gl = 0;
+	int vs = 0;
+	int H = 0;
+public:
+	tree();
+	void pushkoren(int u);
+	void push(int u);
+	void addfirst(Node** t, int u);
+	void add(Node** t, Node* y, int u);
+	void show(Node* t, long n);
+	void print();
+	Node* poisk(Node* t, int u);
+	void printLeaf(Node* t, int u);
+	void primouobxod();
+	void prim(Node*& t);
+	int glub(Node* t, int u);
+	int vsota(Node* t);
+	void putmaxdlin();
+	int poisk1(Node* t, int u);
+	int poiskrasto(Node* t, int u);
+	void simetr(Node*& t);
+	void povorot(int u);
+};
+
+#endif
+////////////////////////////arta.cpp///////////////////////////////////////////////////////////////////////////
+#include "stdafx.h"
+#include "Tree.h"
+
+using namespace std;
+
+int N = 0;
+list* a = new list[1000];
+putmax R;
+int N1 = 0;
+int* F = new int[1000];
+
+tree::tree() {
+	TREE = NULL;
+}
+
+void tree::pushkoren(int u) {
+	return addfirst(&TREE, u);
+}
+
+void tree::push(int u) {
+	return add(&TREE, TREE, u);
+}
+
+void tree::addfirst(Node** t, int u) {
+	(*t) = new Node;
+	(*t)->x = u;
+	(*t)->r = (*t)->l = NULL;
+	(*t)->parent = NULL;
+	return;
+}
+
+void tree::add(Node** t, Node* y, int u) {
+	if ((*t) == NULL) {
+		(*t) = new Node;
+		(*t)->x = u;
+		(*t)->l = (*t)->r = NULL;
+		(*t)->parent = y;
+		return;
+	}
+	if (u > (*t)->x) {
+		if ((*t)->r != NULL) {
+			y = (*t)->r;
+			add(&(*t)->r, y, u);
+		}
+		else {
+			add(&(*t)->r, y, u);
+		}
+	}
+	else {
+		if ((*t)->l != NULL) {
+			y = (*t)->l;
+			add(&(*t)->l, y, u);
+		}
+		else {
+			add(&(*t)->l, y, u);
+		}
+	}
+}
+
+void tree::print() {
+	return show(TREE, 0);
+}
+
+void tree::show(Node* t, long n)
+{
+	long i;
+	if (t)
+	{
+		show(t->r, n + 5);
+		for (i = 0; i < n; i++)
+			printf(" ");
+		printf("%d\n", t->x);
+		show(t->l, n + 5);
+	}
+}
+
+Node * tree::poisk(Node * t, int u) {
+	if (t == NULL) {
+		return NULL;
+	}
+	if (t->x == u) {
+		return t;
+	}
+	if (t->x > u) {
+		if (t->l != NULL) {
+			return poisk(t->l, u);
+		}
+		else {
+			return NULL;
+		}
+	}
+	else {
+		if (t->r != NULL) {
+			return poisk(t->r, u);
+		}
+		else {
+			return NULL;
+		}
+	}
+}
+
+void tree::printLeaf(Node * t, int u)
+{
+	if (t->l == NULL && t->r == NULL) {
+		if (u == 0) {
+			N += 1;
+			list y;
+			glub(TREE, t->x);
+			y.glub = gl;
+			int levele;
+			Node* p = poisk(TREE, TREE->x);
+			vs = vsota(p);
+			levele = vs - gl;
+			gl = 0;
+			vs = 0;
+			y.level = levele;
+			y.opredlist = u;
+			y.u = t->x;
+			y.y = t;
+			a[N - 1] = y;
+			return;
+		}
+		if (u == 1) {
+			N += 1;
+			list y;
+			glub(TREE, t->x);
+			y.glub = gl;
+			int levele;
+			Node* p = poisk(TREE, TREE->x);
+			vs = vsota(p);
+			levele = vs - gl;
+			gl = 0;
+			vs = 0;
+			y.level = levele;
+			y.opredlist = u;
+			y.u = t->x;
+			y.y = t;
+			a[N - 1] = y;
+			return;
+		}
+	}
+	else
+	{
+		if (t->l) printLeaf(t->l, u);
+		if (t->r) printLeaf(t->r, u);
+	}
+}
+
+
+void tree::primouobxod() {
+	return prim(TREE);
+}
+
+void tree::prim(Node * &t) {
+	if (t == NULL) {
+		return;
+	}
+	cout << t->x << endl;
+	prim(t->l);
+	prim(t->r);
+}
+
+int tree::glub(Node * t, int u) {
+	if (t == NULL) {
+		return 1;
+	}
+	if (t->x == u) {
+		return 0;
+	}
+	if (t->x > u) {
+		if (t->l != NULL) {
+			gl += 1;
+			return glub(t->l, u);
+		}
+		else {
+			return 1;
+		}
+	}
+	else {
+		if (t->r != NULL) {
+			gl += 1;
+			return glub(t->r, u);
+		}
+		else {
+			return 1;
+		}
+	}
+}
+
+int tree::vsota(Node * t) {
+	if (t == NULL) {
+		return 0;
+	}
+	int left, right;
+	if (t->l != NULL) {
+		left = vsota(t->l);
+	}
+	else {
+		left = -1;
+	}
+	if (t->r != NULL) {
+		right = vsota(t->r);
+	}
+	else {
+		right = -1;
+	}
+	int max;
+	if (left > right) {
+		max = left;
+	}
+	else if (right > left) {
+		max = right;
+	}
+	else {
+		max = left;
+	}
+	return max + 1;
+}
+
+void tree::putmaxdlin() {
+	printLeaf(TREE->l, 0);
+	printLeaf(TREE->r, 1);
+	int HHHH;
+	int index = 0;
+	for (int i = 0; i < N; i++) {
+		list G;
+		G = a[i];
+		if (i == 0) {
+			HHHH = G.level;
+		}
+		else {
+			if (G.level != HHHH) {
+				index = 1;
+			}
+		}
+	}
+	if (index == 0) {
+		list V;
+		for (int i = 0; i < N; i++) {
+			list G;
+			G = a[i];
+			if (G.opredlist == 1) {
+				V = G;
+				break;
+			}
+		}
+		V.glub = V.glub - 1;
+		V.u = V.y->parent->x;
+		V.y = V.y->parent;
+		list D=a[0];
+		R.put = D.glub + V.glub;
+		R.A = D.y;
+		R.B = V.y;
+		R.opredelitA = 0;
+		R.opredelitB = 1;
+		int m = R.put / 2;
+		glub(TREE, R.A->x);
+		int C1 = gl;
+		gl = 0;
+		glub(TREE, R.B->x);
+		int C2 = gl;
+		gl = 0;
+		if (C1 > C2) {
+		Node* I = R.A;
+		for (int i = 0; i < m; i++) {
+		I = I->parent;
+		}
+		povorot(I->x);
+		return;
+		}
+		if (C2 > C1) {
+		Node* I1 = R.B;
+		for (int i = 0; i < m; i++) {
+		I1 = I1->parent;
+		}
+		povorot(I1->x);
+		return;
+		}
+	}
+	list A;
+	list B;
+	R.put = 0;
+	R.A = NULL;
+	R.B = NULL;
+	int i;
+	int j;
+	for (i = 0; i < N - 1; i++) {
+		A = a[i];
+		for (j = i + 1; j < N; j++) {
+			B = a[j];
+			if (A.opredlist == B.opredlist) {
+				if (A.level != B.level) {
+					int put = poiskrasto(A.y, B.u);
+					if (put > R.put) {
+						R.put = put;
+						R.A = A.y;
+						R.B = B.y;
+						R.opredelitA = A.opredlist;
+						R.opredelitB = B.opredlist;
+					}
+					if (put == R.put) {
+						int sum = A.u + B.u;
+						int sum1 = R.A->x + R.B->x;
+						if (sum1 > sum) {
+							R.A = A.y;
+							R.B = B.y;
+							R.put = put;
+							R.opredelitA = A.opredlist;
+							R.opredelitB = B.opredlist;
+						}
+					}
+				}
+			}
+			if (A.opredlist != B.opredlist) {
+				if (A.level != B.level) {
+					int put = A.glub + B.glub;
+					if (put > R.put) {
+						R.put = put;
+						R.A = A.y;
+						R.B = B.y;
+						R.opredelitA = A.opredlist;
+						R.opredelitB = B.opredlist;
+					}
+					if (put == R.put) {
+						int sum = A.u + B.u;
+						int sum1 = R.A->x + R.B->x;
+						if (sum1 > sum) {
+							R.A = A.y;
+							R.B = B.y;
+							R.put = put;
+							R.opredelitA = A.opredlist;
+							R.opredelitB = B.opredlist;
+						}
+					}
+				}
+			}
+		}
+	}
+	cout << R.A->x << " " << R.B->x << endl;
+	int mid = R.put / 2;
+	if (R.opredelitA == R.opredelitB) {
+		Node* y = R.A;
+		Node* u = R.B;
+		simetr(TREE);
+		int e1 = y->x;
+		int e2 = u->x;
+		int D1;
+		if (e1 > e2) {
+			for (int i = 0; i < N1; i++) {
+				if (F[i] == e2) {
+					D1 = i;
+				}
+			}
+		}
+		if (e2 > e1) {
+			for (int i = 0; i < N1; i++) {
+				if (F[i] == e1) {
+					D1 = i;
+				}
+			}
+		}
+		int povoroty = F[D1 + mid];
+		povorot(povoroty);
+		return;
+	}
+	if (R.opredelitA != R.opredelitB) {
+		glub(TREE, R.A->x);
+		int C1 = gl;
+		gl = 0;
+		glub(TREE, R.B->x);
+		int C2 = gl;
+		gl = 0;
+		if (C1 > C2) {
+			Node* I = R.A;
+			for (int i = 0; i < mid; i++) {
+				I = I->parent;
+			}
+			povorot(I->x);
+			return;
+		}
+		if (C2 > C1) {
+			Node* I1 = R.B;
+			for (int i = 0; i < mid; i++) {
+				I1 = I1->parent;
+			}
+			povorot(I1->x);
+			return;
+		}
+	}
+}
+
+void tree::povorot(int u) {
+	Node* y = poisk(TREE, u);
+	Node* t = y->parent;
+	if (t == TREE) {
+		if (t->l == y) {
+			t->l = y->l;
+			Node* Y = new Node;
+			Y->x = t->x;
+			Y->r = t->r;
+			Y->l = y->r;
+			t->r = Y;
+			t->x = y->x;
+			delete y;
+			return;
+		}
+		if (t->r == y) {
+			t->r = y->r;
+			Node* H = new Node;
+			H->x = t->x;
+			H->l = t->l;
+			H->r = y->l;
+			t->l = H;
+			t->x = y->x;
+			delete y;
+			return;
+		}
+	}
+	if ((t->parent->l == t && t->l == y) || (t->parent->r == t && t->r == y)) {
+		if (t->parent->l == t && t->l == y) {
+			Node* J = TREE->r;
+			TREE->r = NULL;
+			Node* I = TREE;
+			while (t != NULL) {
+				Node* H = new Node;
+				H->x = t->x;
+				H->l = t->l->r;
+				H->r = NULL;
+				I->r = H;
+				I = I->r;
+				t = t->parent;
+			}
+			I->r = J;
+			TREE->x = y->x;
+			TREE->l = y->l;
+			delete y;
+			delete t;
+			return;
+		}
+		if (t->parent->r == t && t->r == y) {
+			Node* X = TREE->l;
+			TREE->l = NULL;
+			Node* Y = TREE;
+			while (t != NULL) {
+				Node* M = new Node;
+				M->x = t->x;
+				M->r = t->r->l;
+				M->l = NULL;
+				Y->l = M;
+				Y = Y->l;
+				t = t->parent;
+			}
+			Y->l = X;
+			TREE->x = y->x;
+			TREE->r = y->r;
+			delete y;
+			delete t;
+			return;
+		}
+	}
+	else {
+		if (t->parent->l == t && t->r == y) {
+			Node* P = new Node;
+			P->x = y->x;
+			P->l = t;
+			P->r = y->r;
+			P->parent = t->parent;
+			t->parent->l = P;
+			t->r = y->l;
+			t->parent = P;
+			delete y;
+			Node* yy = P;
+			Node* tt = P->parent;
+			if (tt == TREE) {
+				tt->l = yy->l;
+				Node* Y = new Node;
+				Y->x = tt->x;
+				Y->r = tt->r;
+				Y->l = yy->r;
+				tt->r = Y;
+				tt->x = yy->x;
+				delete yy;
+				return;
+			}
+			if (tt->parent->l == tt && tt->l == yy) {
+				Node* J = TREE->r;
+				TREE->r = NULL;
+				Node* I = TREE;
+				while (tt != NULL) {
+					Node* H = new Node;
+					H->x = tt->x;
+					H->l = tt->l->r;
+					H->r = NULL;
+					I->r = H;
+					I = I->r;
+					tt = tt->parent;
+				}
+				I->r = J;
+				TREE->x = yy->x;
+				TREE->l = yy->l;
+				delete yy;
+				delete tt;
+				return;
+			}
+		}
+		if (t->parent->r == t && t->l == y) {
+			Node* Z = new Node;
+			Z->x = y->x;
+			Z->l = y->l;
+			Z->r = t;
+			Z->parent = t->parent;
+			t->parent->r = Z;
+			t->r = y->l;
+			t->parent = Z;
+			delete y;
+			Node* yyy = Z;
+			Node* ttt = Z->parent;
+			if (ttt == TREE) {
+				ttt->r = yyy->r;
+				Node* H = new Node;
+				H->x = ttt->x;
+				H->l = ttt->l;
+				H->r = yyy->l;
+				ttt->l = H;
+				ttt->x = yyy->x;
+				delete yyy;
+				return;
+			}
+			if (ttt->parent->r == ttt && ttt->r == yyy) {
+				Node* X = TREE->l;
+				TREE->l = NULL;
+				Node* Y = TREE;
+				while (ttt != NULL) {
+					Node* M = new Node;
+					M->x = ttt->x;
+					M->r = ttt->r->l;
+					M->l = NULL;
+					Y->l = M;
+					Y = Y->l;
+					ttt = ttt->parent;
+				}
+				Y->l = X;
+				TREE->x = yyy->x;
+				TREE->r = yyy->r;
+				delete yyy;
+				delete ttt;
+				return;
+			}
+		}
+	}
+}
+
+int tree::poiskrasto(Node * t, int u) {
+	int put = 0;
+	int E = 0;
+	int i;
+	Node* y;
+	while (E == 0) {
+		y = t;
+		t = t->parent;
+		put += 1;
+		if (t->r == y) {
+			i = poisk1(t->l, u);
+			if (i == 0) {
+				H = 0;
+			}
+			if (i != 0) {
+				put += H;
+				H = 0;
+				E = 1;
+			}
+		}
+		if (t->l == y) {
+			i = poisk1(t->r, u);
+			if (i == 0) {
+				H = 0;
+			}
+			if (i != 0) {
+				put += H;
+				H = 0;
+				E = 1;
+			}
+		}
+	}
+	return put;
+}
+
+int tree::poisk1(Node * t, int u) {
+	if (t == NULL) {
+		return 0;
+	}
+	if (t->x == u) {
+		return H;
+	}
+	if (t->x > u) {
+		if (t->l != NULL) {
+			H += 1;
+			return poisk1(t->l, u);
+		}
+		else {
+			return 0;
+		}
+	}
+	else {
+		if (t->r != NULL) {
+			H += 1;
+			return poisk1(t->r, u);
+		}
+		else {
+			return 0;
+		}
+	}
+}
+
+void tree::simetr(Node * &t) {
+	if (t == NULL) {
+		return;
+	}
+	simetr(t->l);
+	N1 += 1;
+	F[N1 - 1] = t->x;
+	simetr(t->r);
+}
+///////////////////////////////////////main///////////////////////////////////////
+#include "stdafx.h"
+#include "Tree.h"
+
+using namespace std;
+
+int main() {
+	setlocale(0, "");
+	tree a;
+	cout << "Введите количество элементов" << endl;
+	int N;
+	cin >> N;
+	cout << "Введите 1 элемент" << endl;
+	int k;
+	cin >> k;
+	a.pushkoren(k);
+	for (int i = 1; i < N; i++) {
+		int l;
+		cin >> l;
+		a.push(l);
+	}
+	a.putmaxdlin();
+	a.print();
+	a.primouobxod();
+	return 0;
+}
+
+

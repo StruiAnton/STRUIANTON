@@ -1,0 +1,524 @@
+h.//////////////////////////////////////////////////////////
+#pragma once
+#ifndef TREE_H
+#define TREE_H
+
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+
+struct Node {
+	int x;
+	Node* l;
+	Node* r;
+};
+
+class tree {
+private:
+	Node* TREE;
+	Node* parent = NULL;
+	int gl = 0;
+	int vs = 0;
+public:
+	tree();
+	void push(int u);
+	void add(int u, Node** t);
+	void print();
+	void serch(int u);
+	Node* poisk(Node* t, int u);
+	int deletright(int u);
+	int ydaleniepravoe(Node* t, int u);
+	int deletleft(int u);
+	int ydalenielevoe(Node* t, int u);
+	void primouobxod();
+	void obratnobxod();
+	void simetrobxod();
+	void prim(Node*& t);
+	void obrat(Node*& t);
+	void simetr(Node*& t);
+	void glubina(int u);
+	int glub(Node* t, int u);
+	void height(int u);
+	int vsota(Node* t);
+	void level(int u);
+	void show(Node* t,long n);
+};
+
+#endif
+
+cpp///////////////////////////////////////////////////////////////////////
+#include "Tree.h"
+
+using namespace std;
+
+tree::tree() {
+	TREE = NULL;
+}
+
+void tree::push(int u) {
+	return add(u, &TREE);
+}
+
+void tree::add(int u, Node** t) {
+	if ((*t) == NULL) {
+		(*t) = new Node;
+		(*t)->x = u;
+		(*t)->l = (*t)->r = NULL;
+		return;
+	}
+	if (u > (*t)->x) { add(u, &(*t)->r); }
+	else { add(u, &(*t)->l); }
+}
+
+void tree::print() {
+	return show(TREE,0);
+}
+
+void tree::serch(int u) {
+	Node* t;
+	t = poisk(TREE, u);
+	if (t == NULL) {
+		cout << " Нет элемента " << endl;
+	}
+	else {
+		cout << "Элемент есть" << endl;
+	}
+}
+
+Node* tree::poisk(Node* t, int u) {
+	if (t == NULL) {
+		return NULL;
+	}
+	if (t->x == u) {
+		return t;
+	}
+	if (t->x > u) {
+		if (t->l != NULL) {
+			parent = t;
+			return poisk(t->l, u);
+		}
+		else {
+			return NULL;
+		}
+	}
+	else {
+		if (t->r != NULL) {
+			parent = t;
+			return poisk(t->r, u);
+		}
+		else {
+			return NULL;
+		}
+	}
+}
+
+int tree::deletright(int u) {
+	return ydaleniepravoe(TREE, u);
+}
+
+int tree::ydaleniepravoe(Node* t, int u) {
+	if (t == NULL) {
+		return 1;
+	}
+	Node* y = poisk(t, u);
+	if (y->r == NULL && y->l == NULL) {
+		if (y == parent->r) {
+			Node* o = poisk(t, parent->x);
+			o->r = NULL;
+		}
+		else {
+			Node* o = poisk(t, parent->x);
+			o->l = NULL;
+		}
+		delete y;
+		return 0;
+	}
+	if (y->r != NULL && y->l == NULL) {
+		if (y == parent->r) {
+			Node* o = poisk(t, parent->x);
+			o->r = y->r;
+		}
+		else {
+			Node* o = poisk(t, parent->x);
+			o->l = y->r;
+		}
+		delete y;
+		return 0;
+	}
+	if (y->l != NULL && y->r == NULL) {
+		if (y == parent->r) {
+			Node* o = poisk(t, parent->x);
+			o->r = y->l;
+		}
+		else {
+			Node* o = poisk(t, parent->x);
+			o->l = y->l;
+		}
+		delete y;
+		return 0;
+	}
+	if (y->l != NULL && y->r != NULL) {
+		Node* per = NULL;
+		Node* u = y->r;
+		while (u->l != NULL) {
+			per = u;
+			u = u->l;
+		}
+		int vale = u->x;
+		if (u == y->r) {
+			y->r = u->r;
+			y->x = vale;
+			delete u;
+			return 0;
+		}
+		if (u->r != NULL) {
+			per->l = u->r;
+			delete u;
+			y->x = vale;
+			return 0;
+		}
+		else {
+			per->l = NULL;
+			delete u;
+			y->x = vale;
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int tree::deletleft(int u) {
+	return ydalenielevoe(TREE, u);
+}
+
+int tree::ydalenielevoe(Node* t, int u) {
+	if (t == NULL) {
+		return 1;
+	}
+	Node* y = poisk(t, u);
+	if (y->r == NULL && y->l == NULL) {
+		if (y == parent->r) {
+			Node* o = poisk(t, parent->x);
+			o->r = NULL;
+		}
+		else {
+			Node* o = poisk(t, parent->x);
+			o->l = NULL;
+		}
+		delete y;
+		return 0;
+	}
+	if (y->r != NULL && y->l == NULL) {
+		if (y == parent->r) {
+			Node* o = poisk(t, parent->x);
+			o->r = y->r;
+		}
+		else {
+			Node* o = poisk(t, parent->x);
+			o->l = y->r;
+		}
+		delete y;
+		return 0;
+	}
+	if (y->l != NULL && y->r == NULL) {
+		if (y == parent->r) {
+			Node* o = poisk(t, parent->x);
+			o->r = y->l;
+		}
+		else {
+			Node* o = poisk(t, parent->x);
+			o->l = y->l;
+		}
+		delete y;
+		return 0;
+	}
+	if (y->l != NULL && y->r != NULL) {
+		Node* per = NULL;
+		Node* u = y->l;
+		while (u->r != NULL) {
+			per = u;
+			u = u->r;
+		}
+		int vale = u->x;
+		if (u == y->l) {
+			y->l = u->l;
+			y->x = vale;
+			delete u;
+			return 0;
+		}
+		if (u->l != NULL) {
+			per->r = u->l;
+			delete u;
+			y->x = vale;
+			return 0;
+		}
+		else {
+			per->r = NULL;
+			delete u;
+			y->x = vale;
+			return 0;
+		}
+	}
+	return 1;
+}
+
+void tree::primouobxod() {
+	return prim(TREE);
+}
+
+void tree::obratnobxod() {
+	return obrat(TREE);
+}
+
+void tree::simetrobxod() {
+	return simetr(TREE);
+}
+
+void tree::prim(Node*& t) {
+	if (t == NULL) {
+		return;
+	}
+	cout << t->x << endl;
+	prim(t->l);
+	prim(t->r);
+}
+
+void tree::obrat(Node*& t) {
+	if (t == NULL) {
+		return;
+	}
+	obrat(t->l);
+	obrat(t->r);
+	cout << t->x << endl;
+}
+
+void tree::simetr(Node*& t) {
+	if (t == NULL) {
+		return;
+	}
+	simetr(t->l);
+	cout << t->x << endl;
+	simetr(t->r);
+}
+
+int tree::glub(Node* t, int u) {
+	if (t == NULL) {
+		return 1;
+	}
+	if (t->x == u) {
+		return 0;
+	}
+	if (t->x > u) {
+		if (t->l != NULL) {
+			gl += 1;
+			return glub(t->l, u);
+		}
+		else {
+			return 1;
+		}
+	}
+	else {
+		if (t->r != NULL) {
+			gl += 1;
+			return glub(t->r, u);
+		}
+		else {
+			return 1;
+		}
+	}
+}
+
+void tree::glubina(int u) {
+	int j = glub(TREE, u);
+	if (j == 0) {
+		cout << "Глубина:" << gl << endl;
+		gl = 0;
+	}
+	if (j == 1) {
+		cout << "Невозможно определить глубину" << endl;
+		gl = 0;
+	}
+}
+
+void tree::height(int u) {
+	Node* y = poisk(TREE, u);
+	vs = vsota(y);
+	cout << "Высота:" << vs << endl;
+}
+
+int tree::vsota(Node* t) {
+	if (t == NULL) {
+		return 0;
+	}
+	int left, right;
+	if (t->l != NULL) {
+		left = vsota(t->l);
+	}
+	else {
+		left = -1;
+	}
+	if (t->r != NULL) {
+		right = vsota(t->r);
+	}
+	else {
+		right = -1;
+	}
+	int max;
+	if (left > right) {
+		max = left;
+	}
+	else if (right > left) {
+		max = right;
+	}
+	else {
+		max = left;
+	}
+	return max + 1;
+}
+
+void tree::level(int u) {
+	int levele;
+	Node* y = poisk(TREE, TREE->x);
+	vs = vsota(y);
+	int j = glub(TREE, u);
+	if (j == 0) {
+		levele = vs - gl;
+		cout << "Уровень:" <<levele<< endl;
+		gl = 0;
+	}
+	if (j == 1) {
+		cout << "Невозможно определить глубину" << endl;
+		gl = 0;
+	}
+}
+
+void tree::show(Node*t,long n)
+{	
+	long i;
+	if (t)
+	{
+		show(t->r, n + 5);
+		for (i = 0; i < n; i++)
+			printf(" ");
+		printf("%d\n", t->x);
+		show(t->l, n + 5);
+	}
+}
+
+main//////////////////////////////////////////////////////////////
+#include "Tree.h"
+
+using namespace std;
+
+int main() {
+	setlocale(0, "");
+	tree a;
+	for (;;) {
+		char t;
+		cout << "0. Выход" << endl;
+		cout << "1. Добавление" << endl;
+		cout << "2. Вывод дерева на экран" << endl;
+		cout << "3. Поиск" << endl;
+		cout << "4. Удаление" << endl;
+		cout << "5. Прямой обход" << endl;
+		cout << "6. Обратный обход" << endl;
+		cout << "7. Симметричный обход" << endl;
+		cout << "8. Глубина узла" << endl;
+		cout << "9. Высота узла" << endl;
+		cout << "q. Уровень узла" << endl;
+		while (1) {
+			t = _getch();
+			if (t == '1' || t == '2' || t == '3' || t == '4' || t == '5' || t=='6' || t=='7' || t=='8' || t=='9' || t=='0' || t=='q') {
+				break;
+			}
+		}
+		switch (t) {
+		case'1':
+			cout << "Введите элемент" << endl;
+			int u;
+			cin >> u;
+			a.push(u);
+			system("cls");
+			break;
+		case'2':
+			system("cls");
+			cout << "Дерево" << endl;
+			a.print();
+			Sleep(25000);
+			system("cls");
+			break;
+		case '3':
+			cout << "Введите элемент для поиска" << endl;
+			int F;
+			cin >> F;
+			a.serch(F);
+			Sleep(5000);
+			system("cls");
+			break;
+		case '4':
+			cout << "Введите элемент который хотите удалить" << endl;
+			int Q;
+			cin >> Q;
+			cout << "Введите 1 правое удаление 2 левое удаление" << endl;
+			int i;
+			cin >> i;
+			if (i == 1) {
+				a.deletright(Q);
+			}
+			if (i == 2) {
+				a.deletleft(Q);
+			}
+			system("cls");
+			a.print();
+			Sleep(25000);
+			system("cls");
+			break;
+		case'5':
+			cout << "Прямой обход" << endl;
+			a.primouobxod();
+			Sleep(20000);
+			system("cls");
+			break;
+		case '6':
+			cout << "Обратный обход" << endl;
+			a.obratnobxod();
+			Sleep(20000);
+			system("cls");
+			break;
+		case'7':
+			cout << "Симметричный обход" << endl;
+			a.simetrobxod();
+			Sleep(20000);
+			system("cls");
+			break;
+		case '8':
+			cout << "Введите элемент" << endl;
+			int I;
+			cin >> I;
+			a.glubina(I);
+			Sleep(10000);
+			system("cls");
+			break;
+		case '9':
+			cout << "Введите элемент" << endl;
+			int O;
+			cin >> O;
+			a.height(O);
+			Sleep(10000);
+			system("cls");
+			break;
+		case 'q':
+			cout << "Введите элемент" << endl;
+			int K;
+			cin >> K;
+			a.level(K);
+			Sleep(10000);
+			system("cls");
+			break;
+		case'0':
+			exit(1);
+			break;
+		}
+	}
+	return 0;
+	}
